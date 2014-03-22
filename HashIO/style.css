@@ -1,0 +1,30 @@
+#main {
+	width: 600px;
+	margin: 0 auto;
+	margin-top: 200px;
+	font-family: Menlo, Monaco, Consolas, monospace;
+}
+
+input {
+	font-family: Menlo, Monaco, Consolas, monospace;
+	font-size: 20px;
+	width: 100%;
+	padding: 5px;
+	padding-left: none;
+	outline: none;
+	border: none;
+}
+
+#header {
+	margin-bottom: 10px;
+}
+
+#list {
+	width: 100%;
+}
+
+.item {
+	
+	width: 100%;
+	margin-top: 20px;
+}
