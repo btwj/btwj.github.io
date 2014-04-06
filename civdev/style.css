@@ -1,0 +1,163 @@
+* {
+	box-sizing: border-box;
+}
+
+#wrapper {
+	margin-top: 30px;
+	margin-left: 10%;
+	width: 80%;
+	font-family: Helvetica, sans-serif;
+	font-weight: 300;
+}
+
+#era {
+	font-size: 30px;
+	font-weight: bold;
+}
+
+#eradescription {
+	font-weight: 300;
+	margin-top: 5px;
+}
+
+#main {
+	margin-top: 20px;
+}
+
+#resourcesdiv {
+	width: 30%;
+	float: left;
+}
+
+#resources {
+	font-weight: 300;
+	width: 100%;
+	border: 1px solid #000;
+	padding: 10px;
+}
+
+#resources td {
+	padding-top: 10px;
+}
+
+#resources td:nth-child(2) {
+	text-align: right;
+}
+
+#researchdiv {
+	width: 40%;
+	float: left;
+}
+
+#productiondiv {
+	width: 30%;
+}
+
+#researchheader, #productionheader {
+	width: 100%;
+	text-align: center;
+	font-weight: bold;
+	margin-top: 11px;
+}
+
+.research, .production {
+	position: relative;
+	border: 1px solid #000;
+	margin-top: -1px;
+	width: 80%;
+	margin-left: 10%;
+	padding: 20px;
+	transition: all 0.2s ease;
+}
+
+#researches, #productiontypes {
+	height: 500px;
+	overflow-y: scroll;
+}
+.production {
+	width: 100%;
+	margin-left: 0;
+}
+
+.research:hover {
+	background: #333;
+	color: white;
+}
+
+.research:first-child, .production:first-child {
+	margin-top: 10px;
+}
+
+.researchname, .productionname {
+	font-size: 20px;
+}
+
+.researchdescription, .productiondescription {
+	font-size: 15px;
+	margin-top: 2px;
+}
+
+.researchrequirements, .productioncost {
+	margin-top: 5px;
+	font-size: 15px;
+	font-style: italic;
+}
+
+.productioncost {
+	width: 60%;
+}
+
+.productioneffect {
+	margin-top: 2px;
+	font-size: 15px;
+	font-style: italic;
+}
+
+.percentunlocked {
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	font-size: 40px;
+	font-weight: 300;
+}
+
+#productiondiv {
+	width: 30%;
+	float: left;
+}
+
+.addproduction, .reduceproduction {
+	width: 30px;
+	height: 30px;
+	background-color: #fff;
+	position: absolute;
+	color: #333;
+	line-height: 30px;
+	font-size: 20px;
+	text-align: center;
+	transition: all 0.5s ease;
+}
+
+.addproduction {
+	top: 0;
+	right: 0;
+}
+
+.reduceproduction {
+	bottom: 0;
+	right: 0;
+}
+
+.addproduction:hover, .reduceproduction:hover {
+	background-color: #333;
+	color: #fff;
+}
+
+.productionnumber {
+	position: absolute;
+	right: 40px;
+	height: 100%;
+	line-height: 100px;
+	top: 0;
+	font-size: 40px;
+}
