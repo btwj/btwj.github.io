@@ -142,8 +142,12 @@ var Game = (function (game) {
 	var dataName = ["resources", "conversions", "researchProgress", "era", "researchMultiplier", "currentlyResearching", "researchedConversions"];
 	
 	game.load = function () {
+		console.log("loading game...");
 		var ls = localStorage.civdev_gameData;
-		if (!ls) return;
+		if (!ls) {
+			console.log("nothing to load");
+			return;
+		}
 		var jstr = atob(ls);
 		var gameData = JSON.parse(jstr);
 		
@@ -208,7 +212,9 @@ var Game = (function (game) {
 	}
 						
 	game.init = function () {
-		for (var i = 0; i < game.era; i++) {
+		console.log("initializing game");
+		for (var i = 0; i <= game.era; i++) {
+			console.log("rendering researches for era " + i);
 			renderResearches(i);
 		}
 		for (var i = 0; i < game.currentlyResearching.length; i++) {
@@ -338,7 +344,7 @@ var Game = (function (game) {
 
 $(document).ready(function () {
 	
-	Game.load();
+	//Game.load();
 	Game.init();
 	Game.renderLoop();
 	Game.loop();
