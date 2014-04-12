@@ -344,7 +344,7 @@ var Game = (function (game) {
 
 $(document).ready(function () {
 	
-	//Game.load();
+	Game.load();
 	Game.init();
 	Game.renderLoop();
 	Game.loop();
