@@ -143,7 +143,7 @@
 				this.questionsUsed = this.selectQuestions();
 				$rootScope.$emit('over');
 			}
-			$("#question, #options").fadeOut(0).fadeIn(1000);
+			$("#question, #options").fadeOut(0).fadeIn(300);
 		};
 	}]);
 
