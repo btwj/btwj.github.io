@@ -1,0 +1,53 @@
+<!doctype html>
+<html ng-app='game'>
+	<head>
+		<!-- CSS -->
+		<link href="main.css" rel="stylesheet">
+		<!-- Raleway -->
+		<link href='http://fonts.googleapis.com/css?family=Raleway:400,700' rel='stylesheet' type='text/css'>
+		<!-- Lato -->
+		<link href='http://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+		
+		<!-- Angular -->
+		<script src="angular.min.js"></script>
+		<script src="angular-route.min.js"></script>
+		<script src="jquery.min.js"></script>
+		<script src="main.js"></script>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="home" ng-controller="TabController">
+				<!--<h1 id="header">COMPUTING QUIZ</h1>-->
+				<div id="homewrapper" ng-show="state === 0" ng-controller="ScoreController">
+					<div id="podium">
+						<div id="second">{{getAttempt(1).name}}<div class="score">{{getAttempt(1).score}}</div></div>
+						<div id="first">{{getAttempt(0).name}}<div class="score">{{getAttempt(0).score}}</div></div>
+						<div id="third">{{getAttempt(2).name}}<div class="score">{{getAttempt(2).score}}</div></div>
+					</div>
+					<div id="scoreboard">
+						<ol>
+							<li ng-repeat="attempt in attempts">{{attempt.name}}</li>
+						</ol>
+					</div>
+					<div id="proceedBtn" ng-click="changeState(1)">
+						Play
+					</div>
+				</div>
+				<div id="questionwrapper" ng-show="state === 1" ng-controller="QuestionController as questionCtrl">
+					<div id="currentScore">{{questionCtrl.score}}</div>
+					<div id="question">{{questionCtrl.currentQuestion().question}}</div>
+					<div id="options">
+						<div class="option" ng-repeat="option in questionCtrl.currentQuestion().options"  ng-click="questionCtrl.submitAnswer($index)">
+							{{option}}
+						</div>
+					</div>
+				</div>
+				<div id="endwrapper" ng-show="state === 2" ng-controller="ScoreController">
+					<div id="finalScore"></div>
+					<input id="name" placeholder="name"/>
+					<div id="submit" ng-click="finish()">Submit</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

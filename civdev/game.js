@@ -30,11 +30,12 @@ var Game = (function (game) {
 		};
 	};
 
-	var researchType = function (description, unlockedIn, requires, time) {
+	var researchType = function (description, unlockedIn, requires, cost, time) {
 		return {
 			description: description,
 			unlockedIn: unlockedIn,
 			requires: requires,
+			cost: cost,
 			time: time
 		};
 	};
@@ -69,6 +70,8 @@ var Game = (function (game) {
 			table.appendChild(row);
 		});
 	};
+
+
 	
 	
 	
@@ -95,17 +98,17 @@ var Game = (function (game) {
 	};
 	
 	game.researchTypes = {
-		"hunting": researchType("stab things for meat", 0, [], 10),
-		"wood gathering": researchType("stab things for logs", 0, [], 30),
-		"craftsmanship": researchType("stab logs for wood", 0, ["wood gathering"], 50),
-		"masonry": researchType("stab stone", 0, ["craftsmanship"], 80),
-		"domestication": researchType("rear animals", 0, ["hunting", "wood gathering"], 100),
-		"agriculture": researchType("grow crops", 0, ["hunting", "wood gathering"], 120),
-		"mining": researchType("we require more minerals!", ["masonry"], 130)
+		"hunting": researchType("stab things for meat", 0, [], {'food': -1}, 10),
+		"wood gathering": researchType("stab things for logs", 0, [], {'food': -1}, 30),
+		"craftsmanship": researchType("stab logs for wood", 0, ["wood gathering"], {'log': -1}, 50),
+		"masonry": researchType("stab stone", 0, ["craftsmanship"], {'food': -2}, 80),
+		"domestication": researchType("rear animals", 0, ["hunting", "wood gathering"], {'food': -1, 'log': -1}, 100),
+		"agriculture": researchType("grow crops", 0, ["hunting", "wood gathering"], {'food': -2}, 120),
+		"mining": researchType("we require more minerals!", ["masonry"], {'log': -1}, 130)
 	};
 						
 	game.resources = {
-		'food': 40
+		'food': 200
 	};
 						
 	game.researchedConversions = [];
@@ -114,7 +117,7 @@ var Game = (function (game) {
 	game.researchProgress = {};
 	
 	game.naturalEvents = [
-		naturalEventType("Termite Infestation", "A swarm of termites have destroyed your wood!", 0, 0.01, function () {return game.resources.log > 0 || game.resources.wood > 0;}, function () {if (game.resources.log > 0) game.resources.log = Math.floor(game.resources.log * Math.random()); if (game.resources.wood > 0) game.resources.wood = Math.floor(game.resources.wood * Math.random())})
+		naturalEventType("Termite Infestation", "A swarm of termites has destroyed your wood!", 0, 0.01, function () {return game.resources.log > 0 || game.resources.wood > 0;}, function () {if (game.resources.log > 0) game.resources.log = Math.floor(game.resources.log * Math.random()); if (game.resources.wood > 0) game.resources.wood = Math.floor(game.resources.wood * Math.random())})
 	];
 
 	//[total number, number activated]
@@ -126,13 +129,33 @@ var Game = (function (game) {
 	game.speed = 1000;
 	game.researchMultiplier = 1.0;
 
+	var canChange = function (cost) {
+		for (var resource in cost) {
+			if (cost[resource] > 0) continue;
+			if (!game.resources.hasOwnProperty(resource) || game.resources[resource] < -cost[resource]) return false;
+		}
+		return true;
+	};
+
+	var changeResources = function (cost) {
+		for (var resource in cost) {
+			game.resources[resource] += cost[resource];
+		}
+	};
+
 	//game.unlockResearch = function (
 	
 	game.researching = function (obj, researchType, progress) {
 		obj.find(".percentunlocked").text("" + Math.floor(progress * 100) + "%");
 		if (progress < 1) {
 			game.researchProgress[researchType] = progress;
-			setTimeout(function () {game.researching(obj, researchType, progress + 0.01)}, game.researchTypes[researchType].time * 10 * game.researchMultiplier * game.currentlyResearching.length);
+			if (canChange(game.researchTypes[researchType].cost)) {
+				console.log("can afford!");
+				changeResources(game.researchTypes[researchType].cost);
+				setTimeout(function () {game.researching(obj, researchType, progress + 0.01)}, game.researchTypes[researchType].time * 10 * game.researchMultiplier * game.currentlyResearching.length);
+			} else {
+				setTimeout(function () {game.researching(obj, researchType, progress)}, game.researchTypes[researchType].time * 10 * game.researchMultiplier * game.currentlyResearching.length);
+			}
 		} else {
 			game.researchProgress[researchType] = 1;
 			game.currentlyResearching.remove(game.currentlyResearching.indexOf(researchType));
@@ -203,7 +226,7 @@ var Game = (function (game) {
 		game.speed = 1000;
 		game.researchMultiplier = 1.0;
 		game.resources = {
-		'food': 40
+		'food': 200
 		};
 		game.researchedConversions = [];
 		game.renderedConversions = [];

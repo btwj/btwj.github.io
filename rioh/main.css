@@ -1,0 +1,229 @@
+body {
+	background: url("whitediamond.png");
+}
+
+#wrapper {
+	position: absolute;
+	top: 160px;
+	bottom: 40px;
+	right: 40px;
+	left: 40px;
+	border: 10px #333 solid;
+	font-family: Lato;
+}
+
+#homewrapper {
+	width: 600px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+#header {
+	font-family: Raleway, sans-serif;
+	color: #333;
+	width: 100%;
+	text-align: center;
+}
+
+#podium {
+	position: relative;
+	width: 600px;
+	height: 250px;
+	display: flex;
+	align-items: flex-end;
+	margin: 0 auto;
+	margin-top: -120px;
+}
+
+#podium > div {
+	width: 33%;
+	background-color: #333;
+	color: white;
+	text-align: center;
+	font-size: 30px;
+	padding-top: 20px;
+	transition: all ease-out 0.1s;
+}
+
+#first {
+	height: 230px;
+}
+
+#second {
+	height: 180px;
+}
+
+#third {
+	height: 150px;
+}
+
+#first:hover {
+	height: 250px;
+	background-color: #D4AF37;
+}
+
+#second:hover {
+	height: 200px;
+	background-color: #BFC1C2;
+}
+
+#third:hover {
+	height: 170px;
+	background-color: #CD7F32;
+}
+
+.score {
+	position: absolute;
+	font-size: 60px;
+	bottom: 30px;
+	width: 33%;
+	text-align: center;
+	font-family: Lato, sans-serif;
+}
+
+#scoreboard {
+	margin-top: 20px;
+	width: 200px;
+	float: left;
+}
+
+#scoreboard ol {
+	list-style-position: inside;
+	padding-left: 0;
+	max-height: 200px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+#scoreboard li {
+	width: 100%;
+	height: 40px;
+	background-color: #333;
+	color: white;
+	padding-left: 20px;
+	line-height: 40px;
+	transition: all ease-out 0.2s;
+}
+
+#scoreboard li:hover {
+	margin-left: 30px;
+	opacity: 0.8;
+}
+
+#proceedBtn {
+	width: 250px;
+	height: 60px;
+	margin-left: 275px;
+	border: 8px solid #333;
+	margin-top: 100px;
+	
+	font-size: 30px;
+	text-align: center;
+	line-height: 60px;
+	color: #333;
+	
+	transition: all ease-out 0.2s;
+}
+
+#proceedBtn:hover {
+	background-color: #333;
+	color: white;
+	margin-left: 300px;
+}
+
+#questionwrapper {
+	margin-top: 50px;
+}
+
+#question {
+	font-weight: 700;
+	font-size: 40px;
+	color: #333;
+	width: 750px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#options {
+	margin: 0 auto;
+	margin-top: 60px;
+	display: flex;
+	flex-wrap: wrap;
+	width: 600px;
+	height: 60px;
+	
+}
+
+.option {
+	width: 100%;
+	text-align: center;
+	font-size: 30px;
+	font-weight: 300;
+	color: #333;
+	transition: all ease-out 0.2s;
+	line-height: 50px;
+	border: 4px solid #333;
+	border-top: 2px solid #333;
+	border-bottom: 2px solid #333;
+	padding: 10px 0 10px 0;
+}
+
+.option:first-child{
+	border-top: 4px solid #333;
+}
+
+.option:last-child{
+	border-bottom: 4px solid #333;
+}
+
+.option:hover {
+	color: white;
+	background-color: #333;
+}
+
+#currentScore {
+	background-color: #333;
+	color: white;
+	height: 100px;
+	margin: 0 auto;
+	margin-top: -100px;
+	margin-bottom: 30px;
+	width: 100px;
+	text-align: center;
+	border: #333 solid 5px;
+	font-size: 30px;
+	line-height: 100px;
+	border-radius: 50%;
+}
+
+#name {
+	display: block;
+	width: 400px;
+	font-size: 25px;
+	padding: 15px;
+	font-family: 'Lato';
+	margin: 0 auto;
+	margin-top: 100px;
+
+}
+
+#submit {
+	width: 200px;
+	height: 50px;
+	margin: 0 auto;
+	border: 8px solid #333;
+	margin-top: 50px;
+	
+	font-size: 25px;
+	text-align: center;
+	line-height: 50px;
+	color: #333;
+	
+	transition: all ease-out 0.2s;
+
+}
+
+#submit:hover {
+	background-color: #333;
+	color: white;
+};
