@@ -24,7 +24,7 @@
 		{question: "What is the best algorithm to find a list of primes from 1 to N?", options: ['Sieve of Erasthosthenes', 'Trial Division', 'GCD Prime Checking'], ans: 0},
 		{question: "What is a data structure for quick update and range sum queries?", options: ['Balanced BST', 'Fenwick Tree', 'Binary Max Heap', 'Heavy Light Decomposition'], ans: 1},
 		{question: "Which of the following is not an object-oriented language?", options: ['C++', 'Java', 'Javascript', 'x86 Assembly'], ans: 3},
-		{question: "How many bits are there in a byte?", options['1', '2', '4', '8'], ans: 3}
+		{question: "How many bits are there in a byte?", options['1', '2', '4', '8'], ans: 3},
 
 	];
 
