@@ -21,6 +21,10 @@
 		{question: "What is not an example of a Dynamic Programming problem?", options: ['Knapsack', 'Shortest Path on Graph', 'Travelling Salesman Problem'], ans: 1 },
 		{question: "Which of these problems can be solved in polynomial time?", options: ['Knapsack', 'Prime Checking', 'Partition Problem', 'Subset Sum Problem'], ans: 1 },
 		{question: "What is log base 2 of 1 048 576?", options: ['10', '20', '30', '40'], ans: 1 },
+		{question: "What is the best algorithm to find a list of primes from 1 to N?", options: ['Sieve of Erasthosthenes', 'Trial Division', 'GCD Prime Checking'], ans: 0},
+		{question: "What is a data structure for quick update and range sum queries?", options: ['Balanced BST', 'Fenwick Tree', 'Binary Max Heap', 'Heavy Light Decomposition'], ans: 1},
+		{question: "Which of the following is not an object-oriented language?", options: ['C++', 'Java', 'Javascript', 'x86 Assembly'], ans: 3},
+		{question: "How many bits are there in a byte?", options['1', '2', '4', '8'], ans: 3}
 
 	];
 
@@ -90,6 +94,7 @@
 		$scope.finish = function () {
 			var score = $scope.data.score;
 			var username = $("#name").val();
+			if (username == '') username = 'anon';
 			$scope.addAttempt({score: score, name: username});
 			$rootScope.$emit('submitted');
 		}
