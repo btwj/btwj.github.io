@@ -1,0 +1,9 @@
+.icon img {
+	max-width: 120%;
+	max-height: 120%;
+	display: block;
+}
+
+p {
+	font-size: 16px;
+}

@@ -1,0 +1,37 @@
+#title {
+	text-align: center;
+	padding: 100px 0;
+	margin-bottom: 40px;
+	background: url('../img/japan-217878_1920.jpg');
+	background-size: cover;
+	background-position: 0 7%;
+}
+
+#title h3 {
+	font-weight: 500;
+}
+
+.icon {
+	padding: 20px;
+}
+
+.icon img {
+	max-width: 40%;
+	display: block;
+	margin: 0 auto;
+}
+
+.icon h6 {
+	text-align: center;
+	text-transform: uppercase;
+	font-weight: 400;
+}
+
+.icon:hover {
+	background-color: #eee;
+}
+
+#icons a {
+	color: #333;
+	text-decoration: none;
+}

@@ -1,0 +1,38 @@
+@import url(http://fonts.googleapis.com/css?family=Libre+Baskerville:400,400italic);
+
+#topbar {
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+#logo img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+nav ul li {
+	display: inline;
+	margin: 0 20px 130px 0;
+}
+
+nav a {
+	text-decoration: none;
+	color: #333;
+}
+
+a.active {
+	font-weight: 600;
+}
+
+p {
+	font-family: 'Libre Baskerville';
+	line-height: 2;
+}
+
+textarea {
+	height: auto;
+}
+
+body {
+	padding-bottom: 50px;
+}
