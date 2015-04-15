@@ -36,3 +36,37 @@ textarea {
 body {
 	padding-bottom: 50px;
 }
+
+.chem {
+	font-family: 'Open Sans', sans-serif;
+	font-size: 18px;
+}
+
+li .chem {
+	margin-bottom: 5px;
+}
+
+#elements {
+	display: -webkit-flex;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	-webkit-flex-wrap: wrap;
+	-webkit-flex-direction: row;
+	justify-content: flex-start;
+}
+
+.element {
+	height: 90px;
+	width: 90px;
+	margin: 0 5px;
+	font-size: 30px;
+	text-align: center;
+	line-height: 90px;
+	float: left;
+}
+
+.element:hover {
+	background-color: #333;
+	color: white;
+}
