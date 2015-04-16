@@ -1,6 +1,6 @@
 #title {
 	text-align: center;
-	padding: 100px 0;
+	padding: 80px 0;
 	margin-bottom: 40px;
 	background: url('../img/japan-217878_1920.jpg');
 	background-size: cover;
@@ -34,4 +34,12 @@
 #icons a {
 	color: #333;
 	text-decoration: none;
+}
+
+#countries {
+	margin-top: -20px;
+}
+
+body > h5 {
+	text-align: center;
 }

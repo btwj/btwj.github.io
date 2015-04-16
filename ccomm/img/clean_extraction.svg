@@ -3,6 +3,10 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="1000px" height="600px" viewBox="0 0 1000 600" style="enable-background:new 0 0 1000 500;" xml:space="preserve">
+	 <defs>
+<style type="text/css">@import url('http://fonts.googleapis.com/css?family=Raleway:400,300');</style>
+</defs>
+
 <font horiz-adv-x="1000">
 <!-- Raleway is a trademark of Matt McInerney. -->
 <!-- Copyright: Copyright 2015 Adobe System Incorporated. All rights reserved. -->
