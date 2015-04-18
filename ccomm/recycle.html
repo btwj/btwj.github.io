@@ -7,6 +7,12 @@
 	<link rel="stylesheet" href="css/skeleton.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/info.css">
+	<link rel="stylesheet" href="css/tangle.css">
+	<script src="js/mootools.js"></script>
+	<script src="js/tangle.js"></script>
+	<script src="js/tanglekit.js"></script>
+	<script src="js/sprintf.js"></script>
+	<script src="js/BVTouchable.js"></script>
 </head>
 <body>
 	<div class="container" id="topbar">
@@ -34,8 +40,45 @@
 				<h4>Recycling in Japan</h4>
 				<p>Japan recycles many materials, such as glass, paper and plastic. Recycling is enforced under laws by the Ministry of the Environment. Under many other laws, home appliances, construction materials, vehicles and food are also recycled.</p>
 				<img src="img/recycling_bins.jpg" class="u-full-width"/><a href-"http://upload.wikimedia.org/wikipedia/commons/5/50/Recycling_bins_Japan.jpg">Source</a>
+				<p>Recycling is an important part of a smart society. This is because recycling greatly reduces the energy needed to reprocess materials. Less energy is needed to extract the raw materials, and less polutants are released as well.</p>
+			
+				<p id='paperT'>Recycling <span class='TKAdjustableNumber' data-var="paper" data-min="2" data-max="100"> tons of paper</span>, you save <span data-var='trees'> trees</span> and <span data-var='energy'> kWh of energy</span>. That is enough to power a household for <span data-var='energyuse'></span>.</p>
+
+				<p id='glassT'>Recycling <span class='TKAdjustableNumber' data-var="glass" data-max="100"> kg</span> of glass, or about <span data-var="bottles"> bottles</span> saves <span data-var="co2" data-format="%.2f"> kg</span> of carbon dioxide.</p>
+
+				<p id="plasticT">Recycing <span class='TKAdjustableNumber' data-var="plastic"> tons of plastic</span> saves <span data-var='oil' data-format="%.2f"> barrels of oil</span> and <span data-var='energy'> kWh</span> of energy.</p>
 			</div>
 		</div>
 	</div>
+
+	<script>
+		var paper = new Tangle(document.getElementById('paperT'), {
+			initialize: function () { this.paper = 2; this.energyuse = '1 year'},
+			update: function () {
+				this.trees = this.paper * 17;
+				this.energy = this.paper * 4100;
+
+				var mths = 6 * this.paper;
+				var yrs = ~~(mths / 12);
+				this.energyuse = '' + yrs + ' years';
+			}
+		});
+
+		var glass = new Tangle(document.getElementById('glassT'), {
+			initialize: function () { this.glass = 1; },
+			update: function () {
+				this.bottles = this.glass * 3;
+				this.co2 = this.glass * 0.67;
+			}
+		});
+
+		var plastic = new Tangle(document.getElementById('plasticT'), {
+			initialize: function () { this.plastic = 1; },
+			update: function () {
+				this.oil = this.plastic * 16.3;
+				this.energy = this.plastic * 5774;
+			}
+		});
+	</script>
 </body>
 </html>

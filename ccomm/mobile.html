@@ -29,34 +29,36 @@
 				<img src="img/newphone-01.png" />
 			</div>
 			<div class="ten columns">
-				<h1>Mobile Devices</h1>
-				<p>Mobile devices are a core component of a smart society.</p>
+				<h1 data-sr>Mobile Devices</h1>
+				<p >Mobile devices are a core component of a smart society.</p>
 				<p>The construction of such devices is heavily reliant on Rare Earth Metals. However, most current methods of refining Rare Earth Metals create a lot of polution and environmental problems.</p>
 
 				<h4>Use of REMs in Mobile Devices</h4>
 				<p>Rare Earth Metals are used in many different components of mobile phones, such as in the display, the glass, the electronics as well as the speaker.</p>
 				<div id="elements">
 				</div>
-				<div id="info">
+				<div id="info" >
 					<h5 style="margin-bottom: 0"></h5>
 					<p></p>
 				</div>
 
 				<h4>Current Extraction Methods</h4>
 				<p>Current extraction of REMs produce off-gas as well as large volumes of acidic waste water, which is difficult to dispose of.</p>
-				<object type="image/svg+xml" data="img/milt_extraction2.svg" class="u-full-width"></object>
+				<object data-sr type="image/svg+xml" data="img/milt_extraction2.svg" class="u-full-width"></object>
 
-				<h4>Alkaline Treatment to Extract REMs from Bastnaesite</h4>
-				<p>Bastnaesite is a rare earth fluorocarbonate mineral, <span class="chem">RE(CO<sub>3</sub>)F</span>, which primarily contains light rare earth elements. It is the main REM ore extracted in China, and current extraction methods rely on complicated processes with the use of many solvents and reagents.</p>
-				<p><img src="img/bastnaesite.jpg" width="30%" class="u-pull-left"/> <a href="http://en.wikipedia.org/wiki/File:Bastnasite-155010.jpg" style="display:block;">Source</a>Bastnaesite ore is processed to create a concentrate containing 40 to 60% REMs. REM fluorides can be extracted today with two main methods: alkaline treatment or sulfuric acid roasting. The alkaline treatment, developed by Kruesi and Duker of Molycorp, is a three step process, using the following reactions. The alkaline treatment is more environmentally friendly as less resources are used to neutralise the sulfuric acid, and reduces the number of steps in the process.</p>
+				<h4 data-sr>Alkaline Treatment to Extract REMs from Bastnaesite</h4>
+				<p data-sr>Bastnaesite is a rare earth fluorocarbonate mineral, <span class="chem">RE(CO<sub>3</sub>)F</span>, which primarily contains light rare earth elements. It is the main REM ore extracted in China, and current extraction methods rely on complicated processes with the use of many solvents and reagents.</p>
+				<p data-sr><img src="img/bastnaesite.jpg" width="30%" class="u-pull-left"/> <a href="http://en.wikipedia.org/wiki/File:Bastnasite-155010.jpg" style="display:block;">Source</a>Bastnaesite ore is processed to create a concentrate containing 40 to 60% REMs. REM fluorides can be extracted today with two main methods: alkaline treatment or sulfuric acid roasting. The alkaline treatment, developed by Kruesi and Duker of Molycorp, is a three step process, using the following reactions. The alkaline treatment is more environmentally friendly as less resources are used to neutralise the sulfuric acid, and reduces the number of steps in the process.</p>
 				<ol>
-					<li><p class="chem">REF<sub>3</sub> – RE<sub>2</sub>(CO<sub>3</sub>)<sub>3</sub> (s) + 6HCl (aq) &rarr; REF<sub>3</sub> (s) + 2RECl<sub>3</sub> (aq) + 3H<sub>2</sub>O (l) + 3CO<sub>2</sub> (g)</p></li>
-					<li><p class="chem">REF<sub>3</sub> + 3NaOH &rarr; RE(OH)<sub>3</sub> (s) + 3NaF (aq)</p></li>
-					<li><p class="chem">RE(OH)<sub>3</sub> + 3HCl &rarr; RECl<sub>3</sub> (aq) + 3H<sub>2</sub>O</p></li>
+					<li data-sr><p class="chem">REF<sub>3</sub> – RE<sub>2</sub>(CO<sub>3</sub>)<sub>3</sub> (s) + 6HCl (aq) &rarr; REF<sub>3</sub> (s) + 2RECl<sub>3</sub> (aq) + 3H<sub>2</sub>O (l) + 3CO<sub>2</sub> (g)</p></li>
+					<li data-sr="wait 0.3s"><p class="chem">REF<sub>3</sub> + 3NaOH &rarr; RE(OH)<sub>3</sub> (s) + 3NaF (aq)</p></li>
+					<li data-sr="wait 0.6s"><p class="chem">RE(OH)<sub>3</sub> + 3HCl &rarr; RECl<sub>3</sub> (aq) + 3H<sub>2</sub>O</p></li>
 				</ol>
 
 				<h4>Milt for REM Extraction</h4>
-				<p>Milt, or fish semen, contains large amounts of DNA. DNA has many phosphate groups lining its backbone. Rare Earth ions form complexes with the phosphate groups, allowing them to be extracted. Milt is insoluble, ensuring that precipitation occurs easily. Milt is a promising new method as large amounts of it are disposed by the Japanese fishing industry every year.</p>
+				<p>Milt, or fish semen, contains large amounts of DNA. DNA has many phosphate groups lining its backbone. Rare Earth ions form ligands with the phosphate groups, allowing them to be extracted. Milt is insoluble, ensuring that precipitation occurs easily. Milt is a promising new method as large amounts of it are disposed by the Japanese fishing industry every year.
+
+				In order to separate the different REMs, a solution of REM ions are passed through a column containing Milt. Due to their differing adsorption capacities, the different REMs can be found at different parts of the column. This process can be repeated to further separate the REMs.</p>
 
 				<h4>Cleaner Extraction of REMs</h4>
 				<object type="image/svg+xml" data="img/clean_extraction2.svg" class="u-full-width"></object>
@@ -73,5 +75,9 @@
 	</div>
 	
 	<script src="js/mobile.js"></script>
+	<script src="js/scrollreveal.js"></script>
+	<script>
+		window.sr = new scrollReveal();
+	</script>
 </body>
 </html>

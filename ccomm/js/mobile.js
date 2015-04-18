@@ -30,7 +30,7 @@ $(document).ready(function () {
 
 	var elementsDiv = $("#elements");
 
-	elements.forEach(function (cur) {
+	elements.forEach(function (cur, id) {
 
 		var curDiv = $("<div class='element'/>");
 

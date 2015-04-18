@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="css/skeleton.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/index.css">
+	<link rel="stylesheet" href="css/tangle.css">
 </head>
 <body>
 	<div class="container" id="topbar">
@@ -28,10 +29,10 @@
 			</ul>
 		</nav>
 	</div>
-	<div id="title" class="row"><h3>Our mission is to forge international ties for a greener future.</h3></div>
-	<h5>What is a Smart Society?</h5>
-	<object type="image/svg+xml" data="img/smart_society.svg" style="max-width:80%; display: block; margin: -100px auto;"></object>
-	<h5>There are three main components of a smart society</h5>
+	<div id="title" class="row" data-sr><h3>Our mission is to forge international ties for a greener future.</h3></div>
+	<h5 data-sr="wait 0.5s">What is a Smart Society?</h5>
+	<object type="image/svg+xml" data="img/smart_society.svg" style="max-width:80%; display: block; margin: -100px auto;" data-sr="wait 1s"></object>
+	<h5 data-sr>There are three main components of a smart society</h5>
 	<div class="container" id="icons">
 		<div class="four columns">
 			<a href="energy.html">
@@ -58,5 +59,9 @@
 			</a>
 		</div>
 	</div>
+	<script src="js/scrollreveal.js"></script>
+	<script>
+		window.sr = new scrollReveal();
+	</script>
 </body>
 </html>
