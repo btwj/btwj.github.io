@@ -14,6 +14,7 @@ ApplicationMain.__name__ = ["ApplicationMain"];
 ApplicationMain.config = null;
 ApplicationMain.preloader = null;
 ApplicationMain.create = function() {
+	document.oncontextmenu = document.body.oncontextmenu = function() {return false;};
 	var app = new openfl_display_Application();
 	app.create(ApplicationMain.config);
 	var display = new flixel_system_FlxPreloader();
