@@ -14,7 +14,6 @@ ApplicationMain.__name__ = ["ApplicationMain"];
 ApplicationMain.config = null;
 ApplicationMain.preloader = null;
 ApplicationMain.create = function() {
-	document.oncontextmenu = document.body.oncontextmenu = function () {return false;};
 	var app = new openfl_display_Application();
 	app.create(ApplicationMain.config);
 	var display = new flixel_system_FlxPreloader();
@@ -24,10 +23,22 @@ ApplicationMain.create = function() {
 	ApplicationMain.preloader.create(ApplicationMain.config);
 	var urls = [];
 	var types = [];
+	urls.push("assets/fonts/PixelOperator.eot");
+	types.push("BINARY");
+	urls.push("assets/fonts/PixelOperator.svg");
+	types.push("TEXT");
 	urls.push("Pixel Operator");
 	types.push("FONT");
+	urls.push("assets/fonts/PixelOperator.woff");
+	types.push("BINARY");
+	urls.push("assets/fonts/PixelOperatorBold.eot");
+	types.push("BINARY");
+	urls.push("assets/fonts/PixelOperatorBold.svg");
+	types.push("TEXT");
 	urls.push("Pixel Operator Bold");
 	types.push("FONT");
+	urls.push("assets/fonts/PixelOperatorBold.woff");
+	types.push("BINARY");
 	urls.push("assets/images/anode.png");
 	types.push("IMAGE");
 	urls.push("assets/images/anode_button.png");
@@ -46,11 +57,11 @@ ApplicationMain.create = function() {
 	types.push("IMAGE");
 	urls.push("assets/images/ground_button.png");
 	types.push("IMAGE");
+	urls.push("assets/images/in_button.png");
+	types.push("IMAGE");
 	urls.push("assets/images/input.png");
 	types.push("IMAGE");
 	urls.push("assets/images/input_button.png");
-	types.push("IMAGE");
-	urls.push("assets/images/in_button.png");
 	types.push("IMAGE");
 	urls.push("assets/images/junction.png");
 	types.push("IMAGE");
@@ -60,11 +71,11 @@ ApplicationMain.create = function() {
 	types.push("IMAGE");
 	urls.push("assets/images/ok_stamp.png");
 	types.push("IMAGE");
+	urls.push("assets/images/out_button.png");
+	types.push("IMAGE");
 	urls.push("assets/images/output.png");
 	types.push("IMAGE");
 	urls.push("assets/images/output_button.png");
-	types.push("IMAGE");
-	urls.push("assets/images/out_button.png");
 	types.push("IMAGE");
 	urls.push("assets/images/paper.jpg");
 	types.push("IMAGE");
@@ -168,11 +179,11 @@ ApplicationMain.create = function() {
 	types.push("IMAGE");
 	urls.push("flixel/flixel-ui/img/tooltip_arrow.png");
 	types.push("IMAGE");
-	urls.push("flixel/flixel-ui/xml/defaults.xml");
-	types.push("TEXT");
 	urls.push("flixel/flixel-ui/xml/default_loading_screen.xml");
 	types.push("TEXT");
 	urls.push("flixel/flixel-ui/xml/default_popup.xml");
+	types.push("TEXT");
+	urls.push("flixel/flixel-ui/xml/defaults.xml");
 	types.push("TEXT");
 	if(ApplicationMain.config.assetsPrefix != null) {
 		var _g1 = 0;
@@ -196,7 +207,7 @@ ApplicationMain.init = function() {
 	if(total == 0) ApplicationMain.start();
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "574", company : "HaxeFlixel", file : "LD36", fps : 60, name : "LD36", orientation : "portrait", packageName : "com.example.myapp", version : "0.0.1", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 480, parameters : "{}", resizable : true, stencilBuffer : true, title : "LD36", vsync : true, width : 640, x : null, y : null}]};
+	ApplicationMain.config = { build : "2", company : "HaxeFlixel", file : "LD36", fps : 60, name : "LD36", orientation : "portrait", packageName : "com.example.myapp", version : "0.0.1", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : false, height : 480, parameters : "{}", resizable : true, stencilBuffer : true, title : "LD36", vsync : true, width : 640, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -564,7 +575,7 @@ openfl_display_DisplayObject.prototype = $extend(openfl_events_EventDispatcher.p
 			h = bmpBounds.height;
 			this.__cacheGLMatrix = this.__cacheAsBitmapMatrix.clone();
 		} else this.__cacheGLMatrix.identity();
-		if(w <= 0 && h <= 0) return;
+		if(w <= 0 && h <= 0) throw new js__$Boot_HaxeError("Error creating a cached bitmap. The texture size is " + w + "x" + h);
 		if(this.__updateCachedBitmap || this.__updateFilters) {
 			if(this.__cachedFilterBounds != null) {
 				w += Math.abs(this.__cachedFilterBounds.x) + Math.abs(this.__cachedFilterBounds.width);
@@ -1473,12 +1484,9 @@ openfl_display_Sprite.prototype = $extend(openfl_display_DisplayObjectContainer.
 	}
 	,__hitTest: function(x,y,shapeFlag,stack,interactiveOnly,hitObject) {
 		if(this.hitArea != null) {
-			if(!this.hitArea.mouseEnabled) {
-				this.hitArea.mouseEnabled = true;
-				var hitTest = this.hitArea.__hitTest(x,y,shapeFlag,null,true,hitObject);
-				this.hitArea.mouseEnabled = false;
-				if(hitTest) stack[stack.length] = hitObject;
-				return hitTest;
+			if(!this.hitArea.mouseEnabled && this.hitArea.__hitTest(x,y,shapeFlag,stack,interactiveOnly,hitObject)) {
+				stack[stack.length - 1] = hitObject;
+				return true;
 			}
 		} else {
 			if(!hitObject.get_visible() || this.__isMask || interactiveOnly && !this.mouseEnabled && !this.mouseChildren) return false;
@@ -3877,12 +3885,30 @@ var DefaultAssetLibrary = function() {
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$nokiafc22_$ttf);
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$monsterrat_$ttf);
 	var id;
+	id = "assets/fonts/PixelOperator.eot";
+	this.path.set(id,id);
+	this.type.set(id,"BINARY");
+	id = "assets/fonts/PixelOperator.svg";
+	this.path.set(id,id);
+	this.type.set(id,"TEXT");
 	id = "assets/fonts/PixelOperator.ttf";
 	this.className.set(id,_$_$ASSET_$_$assets_$fonts_$pixeloperator_$ttf);
 	this.type.set(id,"FONT");
+	id = "assets/fonts/PixelOperator.woff";
+	this.path.set(id,id);
+	this.type.set(id,"BINARY");
+	id = "assets/fonts/PixelOperatorBold.eot";
+	this.path.set(id,id);
+	this.type.set(id,"BINARY");
+	id = "assets/fonts/PixelOperatorBold.svg";
+	this.path.set(id,id);
+	this.type.set(id,"TEXT");
 	id = "assets/fonts/PixelOperatorBold.ttf";
 	this.className.set(id,_$_$ASSET_$_$assets_$fonts_$pixeloperatorbold_$ttf);
 	this.type.set(id,"FONT");
+	id = "assets/fonts/PixelOperatorBold.woff";
+	this.path.set(id,id);
+	this.type.set(id,"BINARY");
 	id = "assets/images/anode.png";
 	this.path.set(id,id);
 	this.type.set(id,"IMAGE");
@@ -3910,13 +3936,13 @@ var DefaultAssetLibrary = function() {
 	id = "assets/images/ground_button.png";
 	this.path.set(id,id);
 	this.type.set(id,"IMAGE");
+	id = "assets/images/in_button.png";
+	this.path.set(id,id);
+	this.type.set(id,"IMAGE");
 	id = "assets/images/input.png";
 	this.path.set(id,id);
 	this.type.set(id,"IMAGE");
 	id = "assets/images/input_button.png";
-	this.path.set(id,id);
-	this.type.set(id,"IMAGE");
-	id = "assets/images/in_button.png";
 	this.path.set(id,id);
 	this.type.set(id,"IMAGE");
 	id = "assets/images/junction.png";
@@ -3931,13 +3957,13 @@ var DefaultAssetLibrary = function() {
 	id = "assets/images/ok_stamp.png";
 	this.path.set(id,id);
 	this.type.set(id,"IMAGE");
+	id = "assets/images/out_button.png";
+	this.path.set(id,id);
+	this.type.set(id,"IMAGE");
 	id = "assets/images/output.png";
 	this.path.set(id,id);
 	this.type.set(id,"IMAGE");
 	id = "assets/images/output_button.png";
-	this.path.set(id,id);
-	this.type.set(id,"IMAGE");
-	id = "assets/images/out_button.png";
 	this.path.set(id,id);
 	this.type.set(id,"IMAGE");
 	id = "assets/images/paper.jpg";
@@ -4093,13 +4119,13 @@ var DefaultAssetLibrary = function() {
 	id = "flixel/flixel-ui/img/tooltip_arrow.png";
 	this.path.set(id,id);
 	this.type.set(id,"IMAGE");
-	id = "flixel/flixel-ui/xml/defaults.xml";
-	this.path.set(id,id);
-	this.type.set(id,"TEXT");
 	id = "flixel/flixel-ui/xml/default_loading_screen.xml";
 	this.path.set(id,id);
 	this.type.set(id,"TEXT");
 	id = "flixel/flixel-ui/xml/default_popup.xml";
+	this.path.set(id,id);
+	this.type.set(id,"TEXT");
+	id = "flixel/flixel-ui/xml/defaults.xml";
 	this.path.set(id,id);
 	this.type.set(id,"TEXT");
 	var assetsPrefix = null;
@@ -4264,8 +4290,6 @@ lime_text_Font.prototype = {
 	}
 	,__fromFile: function(path) {
 		this.__fontPath = path;
-	}
-	,__setSize: function(size) {
 	}
 	,get_ascender: function() {
 		return 0;
@@ -5859,10 +5883,7 @@ WireGrid.prototype = $extend(flixel_group_FlxTypedSpriteGroup.prototype,{
 							var nt = this.gridElements[nr][nc];
 							if(gridElType == 0) {
 								if(i6 == 0 && (cs & 1) == 0 || i6 == 1 && (cs & 4) == 0 || i6 == 2 && (cs & 2) == 0 || i6 == 3 && (cs & 8) == 0) continue;
-								if(nt.elementType == 0 && this.isValidWire(i6,nt.connectionState)) toVisit.push([nr,nc]); else if(nt.elementType == 1) {
-									if(this.isValidWire(i6,nt.connectionState)) toVisit.push([nr,nc]);
-								} else if(nt.elementType == 2) {
-									toVisit.push([nr,nc]);
+								if(nt.elementType == 0 && this.isValidWire(i6,nt.connectionState)) toVisit.push([nr,nc]); else if(nt.elementType == 1) toVisit.push([nr,nc]); else if(nt.elementType == 2) {
 									if(nt.activationLevel <= 10) nt.activationLevel++;
 									if(nt.activationLevel > 10) nt.activate();
 								} else if(nt.elementType == 3) toVisit.push([nr,nc]); else if(nt.elementType == 7) toVisit.push([nr,nc]); else if(nt.elementType == 8) toVisit.push([nr,nc]);
@@ -6036,7 +6057,7 @@ WireGrid.prototype = $extend(flixel_group_FlxTypedSpriteGroup.prototype,{
 			_g4.push(0);
 		}
 		this.curOutput = _g4;
-		haxe_Log.trace(this.curOutput,{ fileName : "WireGrid.hx", lineNumber : 469, className : "WireGrid", methodName : "resetSimulation"});
+		haxe_Log.trace(this.curOutput,{ fileName : "WireGrid.hx", lineNumber : 468, className : "WireGrid", methodName : "resetSimulation"});
 		this.cycle = 0;
 		this.cycleTimer = 0;
 	}
@@ -12421,7 +12442,6 @@ flixel_addons_ui_FlxMultiGamepadAnalogStick.prototype = $extend(flixel_addons_ui
 		this.sInput = null;
 	}
 	,checkJustPressed: function() {
-		if(this.gamepad == null) return false;
 		var value = false;
 		var dz = this.gamepad.get_deadZone();
 		var _g = this.sInput.id;
@@ -12450,7 +12470,6 @@ flixel_addons_ui_FlxMultiGamepadAnalogStick.prototype = $extend(flixel_addons_ui
 		}
 	}
 	,checkJustReleased: function() {
-		if(this.gamepad == null) return false;
 		var _g = this.sInput.id;
 		switch(_g) {
 		case 19:
@@ -12464,7 +12483,6 @@ flixel_addons_ui_FlxMultiGamepadAnalogStick.prototype = $extend(flixel_addons_ui
 		}
 	}
 	,checkPressed: function() {
-		if(this.gamepad == null) return false;
 		var value = false;
 		var dz = this.gamepad.get_deadZone();
 		var _g = this.sInput.id;
@@ -12485,11 +12503,9 @@ flixel_addons_ui_FlxMultiGamepadAnalogStick.prototype = $extend(flixel_addons_ui
 		return value;
 	}
 	,checkCombos: function(value) {
-		if(this.gamepad == null) return false;
 		return this.gamepad.anyPressed(this.combos) == value;
 	}
 	,checkForbiddens: function(value) {
-		if(this.gamepad == null) return false;
 		return this.gamepad.anyPressed(this.forbiddens) == value;
 	}
 	,__class__: flixel_addons_ui_FlxMultiGamepadAnalogStick
@@ -12675,30 +12691,6 @@ flixel_addons_ui_FlxUI.__interfaces__ = [flixel_addons_ui_interfaces_IEventGette
 flixel_addons_ui_FlxUI.event = function(name,sender,data,params) {
 	var currState = flixel_addons_ui_FlxUI.getLeafUIState();
 	if(currState != null) currState.getEvent(name,sender,data,params); else null;
-};
-flixel_addons_ui_FlxUI.fontStr = function(str,style) {
-	if(style == null) style = "";
-	var t = flixel_addons_ui_FlxUI.__getTongue();
-	if(t != null) str = t.getFont(str);
-	return flixel_addons_ui_U._font(str,style);
-};
-flixel_addons_ui_FlxUI.fontSize = function(str,size) {
-	var t = flixel_addons_ui_FlxUI.__getTongue();
-	if(t != null) size = t.getFontSize(str,size);
-	return size;
-};
-flixel_addons_ui_FlxUI.font = function(str,style,extension) {
-	if(extension == null) extension = ".ttf";
-	if(style == null) style = "";
-	var t = flixel_addons_ui_FlxUI.__getTongue();
-	if(t != null) str = t.getFont(str);
-	return flixel_addons_ui_U.font(str,style,extension);
-};
-flixel_addons_ui_FlxUI.__getTongue = function() {
-	var currState = flixel_addons_ui_FlxUI.getLeafUIState();
-	var tongue = currState._tongue;
-	if(tongue != null) return tongue;
-	return null;
 };
 flixel_addons_ui_FlxUI.forceFocus = function(b,thing) {
 	var currState = flixel_addons_ui_FlxUI.getLeafUIState();
@@ -13101,14 +13093,6 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 				var screenRegion = new flixel_addons_ui_FlxUIRegion(0,0,flixel_FlxG.width,flixel_FlxG.height);
 				screenRegion.name = "screen";
 				this.addAsset(screenRegion,"screen");
-				if(data.hasNode.resolve("screen_override")) {
-					if(this._loadTest(data.node.resolve("screen_override"))) {
-						var screenNode = data.node.resolve("screen_override");
-						this._loadPosition(screenNode,screenRegion);
-						screenRegion.set_width(this._loadWidth(screenNode,flixel_FlxG.width));
-						screenRegion.set_height(this._loadHeight(screenNode,flixel_FlxG.height));
-					}
-				}
 			}
 			this._data = data;
 			if(data.hasNode.resolve("inject")) while(data.hasNode.resolve("inject")) {
@@ -13686,14 +13670,6 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 		}
 		return definition;
 	}
-	,screenWidth: function() {
-		if(this.hasAsset("screen")) return Std["int"](this.getAsset("screen").get_width());
-		return flixel_FlxG.width;
-	}
-	,screenHeight: function() {
-		if(this.hasAsset("height")) return Std["int"](this.getAsset("screen").get_height());
-		return flixel_FlxG.height;
-	}
 	,replaceInGroup: function(original,replace,splice) {
 		if(splice == null) splice = false;
 		if(this._group_index != null) {
@@ -14138,7 +14114,7 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 					return;
 				}
 				var spacing = -1;
-				if(axis == "horizontal") spacing = this._getDataSize("w",flixel_addons_ui_U.xml_str(data.x,"spacing",true),-1); else spacing = this._getDataSize("h",flixel_addons_ui_U.xml_str(data.x,"spacing",true),-1);
+				if(axis == "horizontal") spacing = this._getDataSize("h",flixel_addons_ui_U.xml_str(data.x,"spacing",true),-1); else spacing = this._getDataSize("w",flixel_addons_ui_U.xml_str(data.x,"spacing",true),-1);
 				var resize = flixel_addons_ui_U.xml_bool(data.x,"resize");
 				var grow = flixel_addons_ui_U.xml_bool(data.x,"grow",true);
 				var shrink = flixel_addons_ui_U.xml_bool(data.x,"shrink",true);
@@ -14278,10 +14254,10 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 			if(flixel_addons_ui_U.isStrNum(value)) val_f = parseFloat(value); else return false;
 		} else switch(property) {
 		case "w":case "width":
-			val_f = p * this.screenWidth();
+			val_f = p * this.thisWidth();
 			break;
 		case "h":case "height":
-			val_f = p * this.screenHeight();
+			val_f = p * this.thisHeight();
 			break;
 		}
 		var return_val = false;
@@ -14806,22 +14782,11 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 		var aspect_ratio = flixel_addons_ui_U.xml_f(node.x,"aspect_ratio",-1);
 		if(aspect_ratio != -1) {
 			match = true;
+			var tolerance = flixel_addons_ui_U.xml_f(node.x,"tolerance",0.1);
 			var screen_ratio;
 			screen_ratio = js_Boot.__cast(flixel_FlxG.width , Float) / js_Boot.__cast(flixel_FlxG.height , Float);
 			var diff = Math.abs(screen_ratio - aspect_ratio);
-			if(node.has.resolve("tolerance")) {
-				var tolerance = flixel_addons_ui_U.xml_f(node.x,"tolerance",0.1);
-				if(diff > tolerance) match = false;
-			} else if(node.has.resolve("tolerance_plus") || node.has.resolve("tolerance_minus")) {
-				var tolerance_minus = flixel_addons_ui_U.xml_f(node.x,"tolerance_minus",-1);
-				var tolerance_plus = flixel_addons_ui_U.xml_f(node.x,"tolerance_plus",-1);
-				if(screen_ratio > aspect_ratio && tolerance_plus != -1) {
-					if(diff > tolerance_plus) match = false;
-				}
-				if(screen_ratio < aspect_ratio && tolerance_minus != -1) {
-					if(diff > tolerance_minus) match = false;
-				}
-			}
+			if(diff > tolerance) match = false;
 			if(match != matchValue) return false;
 		}
 		var resolution = flixel_addons_ui_U.xml_pt(node.x,"resolution",null);
@@ -15427,7 +15392,7 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 	,_loadLine: function(data) {
 		var src = "";
 		var axis = flixel_addons_ui_U.xml_str(data.x,"axis",true,"horizontal");
-		var thickness = Std["int"](this._loadWidth(data,-1,"thickness"));
+		var thickness = Std["int"](this._loadWidth(data,1,"thickness"));
 		var bounds = this.calcMaxMinSize(data);
 		if(bounds == null) bounds = { min_width : 1, min_height : 1, max_width : Infinity, max_height : Infinity};
 		switch(axis) {
@@ -15454,7 +15419,7 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 		var lineLength;
 		if(lineAxis == flixel_addons_ui_LineAxis.HORIZONTAL) lineLength = W; else lineLength = H;
 		var lineThickness;
-		if(thickness != -1) lineThickness = thickness; else if(lineAxis == flixel_addons_ui_LineAxis.HORIZONTAL) lineThickness = H; else lineThickness = W;
+		if(lineAxis == flixel_addons_ui_LineAxis.HORIZONTAL) lineThickness = H; else lineThickness = W;
 		var fl = new flixel_addons_ui_FlxUILine(0,0,lineAxis,lineLength,lineThickness,C);
 		return fl;
 	}
@@ -15655,18 +15620,18 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 		case "left":
 			return 0;
 		case "right":
-			return this.screenWidth();
+			return this.thisWidth();
 		case "center":
-			if(axis == "x") return this.screenWidth() / 2; else if(axis == "y") return this.screenHeight() / 2;
+			if(axis == "x") return this.thisWidth() / 2; else if(axis == "y") return this.thisHeight() / 2;
 			break;
 		case "top":case "up":
 			return 0;
 		case "bottom":case "down":
-			return this.screenHeight();
+			return this.thisHeight();
 		default:
 			var perc = flixel_addons_ui_U.perc_to_float(str);
 			if(!isNaN(perc)) {
-				if(axis == "x") return perc * this.screenWidth(); else if(axis == "y") return perc * this.screenHeight();
+				if(axis == "x") return perc * this.thisWidth(); else if(axis == "y") return perc * this.thisHeight();
 			} else {
 				var r = new EReg("[\\w]+\\.[\\w]+","");
 				var property = "";
@@ -15793,9 +15758,9 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 		var percf = flixel_addons_ui_U.perc_to_float(str);
 		if(!isNaN(percf)) switch(target) {
 		case "w":case "width":
-			return this.screenWidth() * percf;
+			return this.thisWidth() * percf;
 		case "h":case "height":
-			return this.screenHeight() * percf;
+			return this.thisHeight() * percf;
 		case "scale":case "scale_x":case "scale_y":
 			return percf;
 		} else {
@@ -15924,13 +15889,13 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 			return_val = 0;
 			break;
 		case "bottom":case "down":
-			return_val = this.screenHeight();
+			return_val = this.thisHeight();
 			break;
 		case "left":
 			return_val = 0;
 			break;
 		case "right":
-			return_val = this.screenWidth();
+			return_val = this.thisWidth();
 			break;
 		default:
 			if(flixel_addons_ui_U.isStrNum(str)) return_val = parseFloat(str); else return_val = -1;
@@ -16158,7 +16123,7 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 	,_loadFontDef: function(data) {
 		var fd = flixel_addons_ui_FontDef.fromXML(data.x);
 		var fontSize = Std["int"](this._loadHeight(data,8,"size"));
-		fd.format.size = flixel_addons_ui_FlxUI.fontSize(fd.file,fontSize);
+		fd.format.size = fontSize;
 		fd.set_size(fontSize);
 		return fd;
 	}
@@ -16166,7 +16131,7 @@ flixel_addons_ui_FlxUI.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype
 		var fontFace = flixel_addons_ui_U.xml_str(data.x,"font");
 		var fontStyle = flixel_addons_ui_U.xml_str(data.x,"style");
 		var the_font = null;
-		if(fontFace != "") the_font = flixel_addons_ui_FlxUI.font(fontFace,fontStyle);
+		if(fontFace != "") the_font = flixel_addons_ui_U.font(fontFace,fontStyle);
 		return the_font;
 	}
 	,_onFinishLoad: function() {
@@ -17987,8 +17952,8 @@ flixel_addons_ui_FlxUITypedButton.prototype = $extend(flixel_ui_FlxTypedButton.p
 		}
 		var old_offx = 0;
 		var old_offy = 0;
-		if(W <= 0) W = 80;
-		if(H <= 0) H = 20;
+		if(W == 0) W = 80;
+		if(H == 0) H = 20;
 		if(Redraw) {
 			if(this._slice9_assets != null) this.loadGraphicSlice9(this._slice9_assets,W | 0,H | 0,this._slice9_arrays,this.tile,this.resize_ratio,this.has_toggle,this._src_w,this._src_h,this._frame_indeces); else if(this._no_graphic) {
 				var upB;
@@ -18547,7 +18512,7 @@ flixel_addons_ui_FlxUIButton.prototype = $extend(flixel_addons_ui_FlxUITypedButt
 		var _g = this.numFrames;
 		while(_g1 < _g) {
 			var i = _g1++;
-			this.stamp(icon,sx + (this.labelOffsets[i > 2?2:i].x | 0),sy + Std["int"](i * this.get_height()) + (this.labelOffsets[i > 2?2:i].y | 0));
+			this.stamp(icon,sx,sy + Std["int"](i * this.get_height()));
 		}
 	}
 	,removeIcon: function() {
@@ -18896,10 +18861,6 @@ flixel_addons_ui_FlxUICursor.prototype = $extend(flixel_addons_ui_FlxUISprite.pr
 			_g11;
 		}
 	}
-	,getCurrentWidget: function() {
-		if(this._widgets != null && this.location >= 0 && this.location < this._widgets.length) return this._widgets[this.location];
-		return null;
-	}
 	,set_listIndex: function(i) {
 		if(i >= this._lists.length) i = this._lists.length - 1; else if(i < 0) i = 0;
 		this.listIndex = i;
@@ -19157,9 +19118,6 @@ flixel_addons_ui_FlxUICursor.prototype = $extend(flixel_addons_ui_FlxUISprite.pr
 			break;
 		}
 	}
-	,clearWidgets: function() {
-		flixel_util_FlxArrayUtil.clearArray(this._widgets);
-	}
 	,removeWidget: function(widget,list) {
 		if(list == null) list = this._widgets;
 		var value = false;
@@ -19375,8 +19333,8 @@ flixel_addons_ui_FlxUICursor.prototype = $extend(flixel_addons_ui_FlxUISprite.pr
 			this._doMouseMove();
 		} else if(this._clickTime > 0) {
 			if(this._clickPressed) {
-				this._doRelease();
 				this._clickPressed = false;
+				this._doRelease();
 			}
 		}
 	}
@@ -19400,25 +19358,20 @@ flixel_addons_ui_FlxUICursor.prototype = $extend(flixel_addons_ui_FlxUISprite.pr
 		}
 		return false;
 	}
-	,_getWidgetPoint: function(Camera) {
-		if(Camera == null) Camera = flixel_FlxG.camera;
+	,_getWidgetPoint: function() {
 		var currWidget = this._widgets[this.location];
 		if(currWidget == null) return null;
 		var fo;
 		var widgetPoint = null;
 		if(js_Boot.__instanceof(currWidget,flixel_FlxObject)) {
 			fo = currWidget;
-			widgetPoint = fo.getScreenPosition();
+			if(fo.scrollFactor != null) widgetPoint = fo.getScreenPosition();
 		}
-		var _g = widgetPoint;
-		_g.set_x(_g.x * Camera.totalScaleX);
-		var _g1 = widgetPoint;
-		_g1.set_y(_g1.y * Camera.totalScaleY);
 		if(widgetPoint == null) widgetPoint = flixel_math_FlxPoint.get(currWidget.x,currWidget.y);
-		var _g2 = widgetPoint;
-		_g2.set_x(_g2.x + currWidget.get_width() / 2);
-		var _g3 = widgetPoint;
-		_g3.set_y(_g3.y + currWidget.get_height() / 2);
+		var _g = widgetPoint;
+		_g.set_x(_g.x + currWidget.get_width() / 2);
+		var _g1 = widgetPoint;
+		_g1.set_y(_g1.y + currWidget.get_height() / 2);
 		return widgetPoint;
 	}
 	,_doMouseMove: function(pt) {
@@ -19429,9 +19382,11 @@ flixel_addons_ui_FlxUICursor.prototype = $extend(flixel_addons_ui_FlxUISprite.pr
 			dispose = true;
 		}
 		if(this.dispatchEvents) {
-			flixel_FlxG.mouse.setGlobalScreenPositionUnsafe(pt.x,pt.y);
+			var rawMouseX = pt.x * flixel_FlxG.camera.zoom | 0;
+			var rawMouseY = pt.y * flixel_FlxG.camera.zoom | 0;
+			flixel_FlxG.mouse.setGlobalScreenPositionUnsafe(rawMouseX,rawMouseY);
 			if(this._newMouse != null) this._newMouse.updateGlobalScreenPosition = false;
-			openfl_Lib.current.stage.dispatchEvent(new openfl_events_MouseEvent("mouseMove",true,false,pt.x,pt.y,openfl_Lib.current.stage,flixel_FlxG.keys.pressed.get_CONTROL(),flixel_FlxG.keys.pressed.get_ALT(),flixel_FlxG.keys.pressed.get_SHIFT()));
+			openfl_Lib.current.stage.dispatchEvent(new openfl_events_MouseEvent("mouseMove",true,false,rawMouseX,rawMouseY,openfl_Lib.current.stage,flixel_FlxG.keys.pressed.get_CONTROL(),flixel_FlxG.keys.pressed.get_ALT(),flixel_FlxG.keys.pressed.get_SHIFT()));
 		}
 		if(dispose) pt.put();
 	}
@@ -19444,11 +19399,9 @@ flixel_addons_ui_FlxUICursor.prototype = $extend(flixel_addons_ui_FlxUISprite.pr
 			if(pt == null) return;
 			dispose = true;
 		}
-		if(this.dispatchEvents) {
-			var rawMouseX = pt.x * flixel_FlxG.camera.zoom;
-			var rawMouseY = pt.y * flixel_FlxG.camera.zoom;
-			openfl_Lib.current.stage.dispatchEvent(new openfl_events_MouseEvent("mouseDown",true,false,rawMouseX,rawMouseY,openfl_Lib.current.stage,flixel_FlxG.keys.pressed.get_CONTROL(),flixel_FlxG.keys.pressed.get_ALT(),flixel_FlxG.keys.pressed.get_SHIFT()));
-		}
+		var rawMouseX = pt.x * flixel_FlxG.camera.zoom;
+		var rawMouseY = pt.y * flixel_FlxG.camera.zoom;
+		if(this.dispatchEvents) openfl_Lib.current.stage.dispatchEvent(new openfl_events_MouseEvent("mouseDown",true,false,rawMouseX,rawMouseY,openfl_Lib.current.stage,flixel_FlxG.keys.pressed.get_CONTROL(),flixel_FlxG.keys.pressed.get_ALT(),flixel_FlxG.keys.pressed.get_SHIFT()));
 		if(this.callback != null) this.callback("cursor_down",currWidget);
 		if(dispose) pt.put();
 	}
@@ -20118,11 +20071,10 @@ var flixel_addons_ui_FlxUILine = function(X,Y,Axis,Length,Thickness,Color) {
 	this.length = 10;
 	this.axis = flixel_addons_ui_LineAxis.HORIZONTAL;
 	flixel_addons_ui_FlxUISprite.call(this,X,Y);
-	this.makeGraphic(2,2,-1);
+	this.makeGraphic(1,1,-1);
 	this.set_color(Color);
 	this.set_axis(Axis);
 	this.set_length(Length);
-	this.set_thickness(Thickness);
 };
 $hxClasses["flixel.addons.ui.FlxUILine"] = flixel_addons_ui_FlxUILine;
 flixel_addons_ui_FlxUILine.__name__ = ["flixel","addons","ui","FlxUILine"];
@@ -20145,7 +20097,7 @@ flixel_addons_ui_FlxUILine.prototype = $extend(flixel_addons_ui_FlxUISprite.prot
 		return t;
 	}
 	,refresh: function() {
-		if(this.axis == flixel_addons_ui_LineAxis.HORIZONTAL) this.scale.set(0.5 * this.length,0.5 * this.thickness); else this.scale.set(0.5 * this.thickness,0.5 * this.length);
+		if(this.axis == flixel_addons_ui_LineAxis.HORIZONTAL) this.scale.set(this.length,this.thickness); else this.scale.set(this.thickness,this.length);
 		this.updateHitbox();
 	}
 	,resize: function(width,height) {
@@ -20364,10 +20316,6 @@ flixel_addons_ui_FlxUIList.prototype = $extend(flixel_addons_ui_FlxUIGroup.proto
 			this.nextButton.set_x(this.nextButtonOffset.x);
 			this.nextButton.set_y(this.nextButtonOffset.y + this.get_height() + 2);
 		}
-		this.prevButton.set_x(this.prevButton.x | 0);
-		this.prevButton.set_y(this.prevButton.y | 0);
-		this.nextButton.set_x(this.nextButton.x | 0);
-		this.nextButton.set_y(this.nextButton.y | 0);
 		var highestIndex = 0;
 		var _g = 0;
 		var _g1 = this.group.members;
@@ -21404,7 +21352,7 @@ flixel_addons_ui_FlxUIState.prototype = $extend(flixel_addons_transition_FlxTran
 	}
 	,update: function(elapsed) {
 		flixel_addons_transition_FlxTransitionableState.prototype.update.call(this,elapsed);
-		if(this.tooltips != null) this.tooltips.update(elapsed);
+		this.tooltips.update(elapsed);
 	}
 	,cleanup: function() {
 		this._ui.cleanup();
@@ -21447,8 +21395,6 @@ flixel_addons_ui_FlxUIState.prototype = $extend(flixel_addons_transition_FlxTran
 		flixel_FlxG.scaleMode.onMeasure(Width,Height);
 		this._reload_countdown = 1;
 		this._reload = true;
-	}
-	,onShowTooltip: function(t) {
 	}
 	,destroy: function() {
 		this.destroyed = true;
@@ -21547,7 +21493,7 @@ flixel_addons_ui_FlxUISubState.prototype = $extend(flixel_FlxSubState.prototype,
 		if(flixel_addons_ui_FlxUIState.static_tongue != null) this._tongue = flixel_addons_ui_FlxUIState.static_tongue;
 		if(this._makeCursor == true) this.cursor = this.createCursor();
 		this.tooltips = new flixel_addons_ui_FlxUITooltipManager(null,this);
-		this._ui = this.createUI(null,this,null,this._tongue);
+		this._ui = new flixel_addons_ui_FlxUI(null,this,null,this._tongue);
 		this.add(this._ui);
 		this._ui.getTextFallback = this.getTextFallback;
 		if(this._xml_id != "" && this._xml_id != null) {
@@ -21568,8 +21514,6 @@ flixel_addons_ui_FlxUISubState.prototype = $extend(flixel_FlxSubState.prototype,
 	}
 	,onCursorEvent: function(code,target) {
 		this.getEvent(code,target,null);
-	}
-	,onShowTooltip: function(t) {
 	}
 	,onResize: function(Width,Height) {
 		flixel_FlxG.scaleMode.onMeasure(Width,Height);
@@ -21611,17 +21555,13 @@ flixel_addons_ui_FlxUISubState.prototype = $extend(flixel_FlxSubState.prototype,
 	,createCursor: function() {
 		return new flixel_addons_ui_FlxUICursor($bind(this,this.onCursorEvent));
 	}
-	,createUI: function(data,ptr,superIndex_,tongue_,liveFilePath_) {
-		if(liveFilePath_ == null) liveFilePath_ = "";
-		return new flixel_addons_ui_FlxUI(data,ptr,superIndex_,tongue_,liveFilePath_);
-	}
 	,reloadUI: function() {
 		if(this._ui != null) {
 			this.remove(this._ui,true);
 			this._ui.destroy();
 			this._ui = null;
 		}
-		this._ui = this.createUI(null,this,null,this._tongue);
+		this._ui = new flixel_addons_ui_FlxUI(null,this,null,this._tongue);
 		this.add(this._ui);
 		var data = flixel_addons_ui_U.xml(this._xml_id);
 		this._ui.load(data);
@@ -22233,8 +22173,7 @@ flixel_addons_ui_FlxUITooltip.fillFormatNulls = function(a,b) {
 };
 flixel_addons_ui_FlxUITooltip.__super__ = flixel_addons_ui_FlxUIGroup;
 flixel_addons_ui_FlxUITooltip.prototype = $extend(flixel_addons_ui_FlxUIGroup.prototype,{
-	show: function(obj,Title,Body,AutoSizeVertical,AutoSizeHorizontal,ShowArrow) {
-		if(ShowArrow == null) ShowArrow = true;
+	show: function(obj,Title,Body,AutoSizeVertical,AutoSizeHorizontal) {
 		if(AutoSizeHorizontal == null) AutoSizeHorizontal = true;
 		if(AutoSizeVertical == null) AutoSizeVertical = true;
 		if(Body == null) Body = "";
@@ -22251,9 +22190,8 @@ flixel_addons_ui_FlxUITooltip.prototype = $extend(flixel_addons_ui_FlxUIGroup.pr
 		this._arrowBkg.set_y(0);
 		this._arrowBkg = this.makeArrowBkg(this._arrowBkg);
 		this._arrow.set_color(this.style.background);
-		this._arrow.set_visible(this._arrowBkg.set_visible(ShowArrow));
-		if(this.style.titleWidth > 0) this._titleText.set_width(Std["int"](this._titleText.textField.set_width(this.style.titleWidth)));
-		if(this.style.bodyWidth > 0) this._bodyText.set_width(Std["int"](this._bodyText.textField.set_width(this.style.bodyWidth)));
+		if(this.style.titleWidth > 0) this._titleText.set_width(this._titleText.textField.set_width(this.style.titleWidth));
+		if(this.style.bodyWidth > 0) this._bodyText.set_width(this._bodyText.textField.set_width(this.style.bodyWidth));
 		if(this.style.titleFormat != null) this.style.titleFormat.apply(null,this._titleText);
 		if(this.style.bodyFormat != null) this.style.bodyFormat.apply(null,this._bodyText);
 		if(this.style.titleBorder != null) this.style.titleBorder.apply(this._titleText);
@@ -22262,15 +22200,15 @@ flixel_addons_ui_FlxUITooltip.prototype = $extend(flixel_addons_ui_FlxUIGroup.pr
 		this._bodyText.set_text(Body);
 		this._titleText.update(0);
 		this._bodyText.update(0);
-		var titleHeight = Std["int"](this._titleText.textField.get_textHeight() + 4);
-		var bodyHeight = Std["int"](this._bodyText.textField.get_textHeight() + 4);
+		var titleHeight = this._titleText.textField.get_textHeight() + 4;
+		var bodyHeight = this._bodyText.textField.get_textHeight() + 4;
 		if(this.style.titleOffset != null) {
-			this._titleText.set_x(this.style.titleOffset.x | 0);
-			this._titleText.set_y(this.style.titleOffset.y | 0);
+			this._titleText.set_x(this.style.titleOffset.x);
+			this._titleText.set_y(this.style.titleOffset.y);
 		}
 		if(this.style.bodyOffset != null) {
-			this._bodyText.set_x(this.style.bodyOffset.x | 0);
-			this._bodyText.set_y(this._titleText.y + titleHeight + this.style.bodyOffset.y | 0);
+			this._bodyText.set_x(this.style.bodyOffset.x);
+			this._bodyText.set_y(this._titleText.y + titleHeight + this.style.bodyOffset.y);
 		}
 		var W = Std["int"](this._bkg.get_width());
 		var H = Std["int"](this._bkg.get_height());
@@ -22298,12 +22236,10 @@ flixel_addons_ui_FlxUITooltip.prototype = $extend(flixel_addons_ui_FlxUIGroup.pr
 		W = W | 0;
 		H = H | 0;
 		this.refreshBkg(W,H,this.style);
-		var oldOffX = this._anchorArrow.x.offset | 0;
-		var oldOffY = this._anchorArrow.y.offset | 0;
+		var oldOffX = this._anchorArrow.x.offset;
+		var oldOffY = this._anchorArrow.y.offset;
 		this._anchorArrow.x.offset -= this.anchor.x.offset;
 		this._anchorArrow.y.offset += this.anchor.y.offset;
-		this._anchorArrow.x.offset = this._anchorArrow.x.offset | 0;
-		this._anchorArrow.y.offset = this._anchorArrow.y.offset | 0;
 		this._anchorArrow.anchorThing(this._arrow,this._bkg);
 		this._anchorArrow.x.offset = oldOffX;
 		this._anchorArrow.y.offset = oldOffY;
@@ -22352,10 +22288,8 @@ flixel_addons_ui_FlxUITooltip.prototype = $extend(flixel_addons_ui_FlxUIGroup.pr
 			this._bodyText.set_width(this._bkg.get_width());
 		}
 		this.anchor.anchorThing(this,obj);
-		this.set_x(this.x | 0);
-		this.set_y(this.y | 0);
-		this._arrowBkg.set_x(this._arrow.x - this.style.borderSize | 0);
-		this._arrowBkg.set_y(this._arrow.y - this.style.borderSize | 0);
+		this._arrowBkg.set_x(this._arrow.x - this.style.borderSize);
+		this._arrowBkg.set_y(this._arrow.y - this.style.borderSize);
 		this._titleText.set_x(this._titleText.x | 0);
 		this._bodyText.set_x(this._bodyText.x | 0);
 		this._bkg.set_x(this._bkg.x | 0);
@@ -22364,24 +22298,6 @@ flixel_addons_ui_FlxUITooltip.prototype = $extend(flixel_addons_ui_FlxUIGroup.pr
 		this._arrowBkg.set_y(this._arrowBkg.y | 0);
 		this._arrow.set_x(this._arrow.x | 0);
 		this._arrow.set_y(this._arrow.y | 0);
-	}
-	,get_height: function() {
-		if(this.group.length == 0) return 0;
-		var minY = Infinity;
-		var maxY = -Infinity;
-		var _g = 0;
-		var _g1 = this._sprites;
-		while(_g < _g1.length) {
-			var member = _g1[_g];
-			++_g;
-			if(member == null) continue;
-			if(js_Boot.__instanceof(member,flixel_text_FlxText)) continue;
-			var minMemberY = member.y;
-			var maxMemberY = minMemberY + member.get_height();
-			if(maxMemberY > maxY) maxY = maxMemberY;
-			if(minMemberY < minY) minY = minMemberY;
-		}
-		return maxY - minY;
 	}
 	,hide: function() {
 		this.set_visible(false);
@@ -22559,7 +22475,6 @@ var flixel_addons_ui_FlxUITooltipManager = function(State,SubState) {
 	this.delay = 0.1;
 	this.showOnClick = false;
 	this.defaultStyle = null;
-	this.fixedPosition = null;
 	this.defaultAnchor = null;
 	this.autoFlipAnchor = true;
 	if(State != null) this.state = State; else if(SubState != null) this.subState = SubState;
@@ -22602,14 +22517,11 @@ flixel_addons_ui_FlxUITooltipManager.prototype = {
 	,hideCurrent: function() {
 		if(this.current > 0) this.hide(this.current);
 	}
-	,isVisible: function() {
-		return this.current > 0;
-	}
 	,doesCurrentTooltipBelongTo: function(thing,checkChildren) {
 		if(checkChildren == null) checkChildren = true;
 		if(js_Boot.__instanceof(thing,flixel_addons_ui_FlxUIGroup)) {
 			var i = this.findObj(thing);
-			if(i != -1) return i == this.current;
+			if(i != -1) return true;
 			if(checkChildren) {
 				var fuig = thing;
 				var _g = 0;
@@ -22631,25 +22543,17 @@ flixel_addons_ui_FlxUITooltipManager.prototype = {
 		}
 		return false;
 	}
-	,stickyTooltipFor: function(thing,sticky) {
-		if(sticky == null) sticky = true;
-		var i = this.findThing(thing);
-		if(i != -1) this.list[i].sticky = sticky;
-	}
-	,showTooltipFor: function(thing,value) {
-		if(value == null) value = true;
-		var i = this.findThing(thing);
-		if(i != -1) {
-			this.current = -1;
-			if(value) this.show(i); else this.hide(i);
-		}
-	}
 	,enableTooltipFor: function(thing,enabled) {
-		var i = this.findThing(thing);
-		if(i >= 0 && i < this.list.length) {
-			var entry = this.list[i];
-			entry.enabled = enabled;
-			return true;
+		if(thing == null) return false;
+		var _g = 0;
+		var _g1 = this.list;
+		while(_g < _g1.length) {
+			var entry = _g1[_g];
+			++_g;
+			if(entry.obj == thing || js_Boot.__instanceof(thing,flixel_addons_ui_interfaces_IFlxUIButton) && js_Boot.__cast(thing , flixel_addons_ui_interfaces_IFlxUIButton) == entry.btn) {
+				entry.enabled = enabled;
+				return true;
+			}
 		}
 		return false;
 	}
@@ -22719,7 +22623,7 @@ flixel_addons_ui_FlxUITooltipManager.prototype = {
 				btn.set_y(obj.y);
 				btn.set_visible(obj.visible);
 			}
-			if(this.list[i].sticky == false && (false == btn.visible || btn.get_justMousedOut() || btn.get_mouseIsOut())) {
+			if(false == btn.visible || btn.get_justMousedOut() || btn.get_mouseIsOut()) {
 				this.list[i].count = 0;
 				this.hide(i);
 			} else if(btn.get_justMousedOver() || btn.get_mouseIsOver()) {
@@ -22737,17 +22641,6 @@ flixel_addons_ui_FlxUITooltipManager.prototype = {
 			if(this.subState != null) this.subState.remove(this.tooltip,true);
 			this.current = -1;
 		}
-	}
-	,findThing: function(thing) {
-		if(thing == null) return -1;
-		var _g = 0;
-		var _g1 = this.list;
-		while(_g < _g1.length) {
-			var entry = _g1[_g];
-			++_g;
-			if(entry.obj == thing || js_Boot.__instanceof(thing,flixel_addons_ui_interfaces_IFlxUIButton) && js_Boot.__cast(thing , flixel_addons_ui_interfaces_IFlxUIButton) == entry.btn) return HxOverrides.indexOf(this.list,entry,0);
-		}
-		return -1;
 	}
 	,findBtn: function(btn) {
 		if(btn == null) return -1;
@@ -22769,18 +22662,7 @@ flixel_addons_ui_FlxUITooltipManager.prototype = {
 		}
 		return -1;
 	}
-	,set_fixedPosition: function(value) {
-		this.fixedPosition = value;
-		if(this.tooltip != null && this.tooltip.visible) this.show(this.current);
-		return this.fixedPosition;
-	}
-	,set_showTooltipArrow: function(b) {
-		this.showTooltipArrow = b;
-		if(this.tooltip != null && this.tooltip.visible) this.tooltip._arrow.set_visible(this.tooltip._arrowBkg.set_visible(b));
-		return this.showTooltipArrow;
-	}
 	,show: function(i) {
-		if(i < 0 || i >= this.list.length) return;
 		var btn = this.list[i].btn;
 		if(btn.visible == false || this.list[i].obj != null && this.list[i].obj.visible == false) return;
 		if(this.current == i) {
@@ -22811,30 +22693,23 @@ flixel_addons_ui_FlxUITooltipManager.prototype = {
 		if(this.state != null) this.state.add(this.tooltip);
 		if(this.subState != null) this.subState.add(this.tooltip);
 		this.tooltip.show(btn,data.title,data.body,autoSizeVertical,autoSizeHorizontal);
-		if(this.fixedPosition != null) this.fixedPosition.anchor.anchorThing(this.tooltip,this.fixedPosition.object);
 		if(this.autoFlipAnchor) {
-			if(this.checkAutoFlip(this.tooltip,this.fixedPosition != null?this.fixedPosition.anchor:null)) {
-				if(this.fixedPosition != null) this.fixedPosition.anchor.anchorThing(this.tooltip,this.fixedPosition.object); else this.tooltip.show(btn,data.title,data.body,autoSizeVertical,autoSizeHorizontal,this.showTooltipArrow);
-			}
+			if(this.checkAutoFlip(btn,this.tooltip)) this.tooltip.show(btn,data.title,data.body,autoSizeVertical,autoSizeHorizontal);
 		}
 		this.lastPosition.set(btn.x,btn.y);
-		if(this.state != null) this.state.onShowTooltip(this.tooltip); else if(this.subState != null) this.subState.onShowTooltip(this.tooltip);
 	}
-	,checkAutoFlip: function(tooltip,anchor) {
+	,checkAutoFlip: function(thing,tooltip) {
 		var flipX = tooltip.x < 0 || tooltip.x + tooltip.get_width() > flixel_FlxG.width;
 		var flipY = tooltip.y < 0 || tooltip.y + tooltip.get_height() > flixel_FlxG.height;
 		if(flipX || flipY) {
-			if(anchor == null) anchor = tooltip.anchor;
-			anchor = anchor.getFlipped(flipX,flipY);
+			tooltip.set_anchor(tooltip.anchor.getFlipped(flipX,flipY));
 			return true;
 		}
 		return false;
 	}
 	,__class__: flixel_addons_ui_FlxUITooltipManager
-	,__properties__: {set_showTooltipArrow:"set_showTooltipArrow",set_fixedPosition:"set_fixedPosition"}
 };
 var flixel_addons_ui__$FlxUITooltipManager_FlxUITooltipEntry = function(Btn,Data,Obj) {
-	this.sticky = false;
 	this.btn = Btn;
 	this.data = Data;
 	this.obj = Obj;
@@ -22903,9 +22778,9 @@ flixel_addons_ui_FontDef.fromXML = function(data) {
 	var fontFace = flixel_addons_ui_U.xml_str(data,"font");
 	var fontStyle = flixel_addons_ui_U.xml_str(data,"style");
 	var fontFile = null;
-	if(fontFace != "") fontFile = flixel_addons_ui_FlxUI.font(fontFace,fontStyle);
+	if(fontFace != "") fontFile = flixel_addons_ui_U.font(fontFace,fontStyle);
 	var fontStyle1 = flixel_addons_ui_U.xml_str(data,"style");
-	var fontSize = flixel_addons_ui_FlxUI.fontSize(fontFile,flixel_addons_ui_U.xml_i(data,"size",8));
+	var fontSize = flixel_addons_ui_U.xml_i(data,"size",8);
 	var fontColor = flixel_addons_ui_U.xml_color(data,"color",true,-1);
 	var fontAlign = flixel_addons_ui_U.xml_str(data,"align");
 	var align;
@@ -24545,28 +24420,6 @@ flixel_addons_ui_U.strCase = function(str,code) {
 flixel_addons_ui_U.unparentXML = function(f) {
 	if(f.x.parent != null) f.x.parent.removeChild(f.x);
 	return f;
-};
-flixel_addons_ui_U.setButtonLabel = function(btn,str) {
-	if(btn == null) return;
-	if(js_Boot.__instanceof(btn,flixel_addons_ui_FlxUIButton)) (js_Boot.__cast(btn , flixel_addons_ui_FlxUIButton)).label.set_text(str); else if(js_Boot.__instanceof(btn,flixel_addons_ui_FlxUISpriteButton)) {
-		var fuisb = btn;
-		if(fuisb.label == null) return;
-		if(js_Boot.__instanceof(fuisb.label,flixel_group_FlxTypedSpriteGroup)) {
-			var g = fuisb.label;
-			if(g.group.members == null) return;
-			var _g = 0;
-			var _g1 = g.group.members;
-			while(_g < _g1.length) {
-				var sprite = _g1[_g];
-				++_g;
-				if(sprite == null) continue;
-				if(js_Boot.__instanceof(sprite,flixel_text_FlxText)) {
-					(js_Boot.__cast(sprite , flixel_text_FlxText)).set_text(str);
-					return;
-				}
-			}
-		}
-	}
 };
 flixel_addons_ui_U.getMatrix = function() {
 	if(flixel_addons_ui_U._matrix == null) flixel_addons_ui_U._matrix = new openfl_geom_Matrix();
@@ -31326,13 +31179,13 @@ flixel_math_FlxVector.prototype = $extend(flixel_math_FlxPoint.prototype,{
 		return this.x * normalized.x + this.y * normalized.y;
 	}
 	,isPerpendicular: function(v) {
-		return Math.abs(this.x * v.x + this.y * v.y) < 9.9999999999999984e-015;
+		return Math.abs(this.x * v.x + this.y * v.y) < 9.99999999999999841e-15;
 	}
 	,crossProductLength: function(v) {
 		return this.x * v.y - this.y * v.x;
 	}
 	,isParallel: function(v) {
-		return Math.abs(this.x * v.y - this.y * v.x) < 9.9999999999999984e-015;
+		return Math.abs(this.x * v.y - this.y * v.x) < 9.99999999999999841e-15;
 	}
 	,isZero: function() {
 		return Math.abs(this.x) < 0.0000001 && Math.abs(this.y) < 0.0000001;
@@ -31349,7 +31202,7 @@ flixel_math_FlxVector.prototype = $extend(flixel_math_FlxPoint.prototype,{
 		return this.scale(1 / Math.sqrt(this.x * this.x + this.y * this.y));
 	}
 	,isNormalized: function() {
-		return Math.abs(this.x * this.x + this.y * this.y - 1) < 9.9999999999999984e-015;
+		return Math.abs(this.x * this.x + this.y * this.y - 1) < 9.99999999999999841e-15;
 	}
 	,rotateByRadians: function(rads) {
 		var s = Math.sin(rads);
@@ -31403,8 +31256,8 @@ flixel_math_FlxVector.prototype = $extend(flixel_math_FlxPoint.prototype,{
 		return this.y * v.x + -this.x * v.y;
 	}
 	,ratio: function(a,b,v) {
-		if(Math.abs(this.x * v.y - this.y * v.x) < 9.9999999999999984e-015) return NaN;
-		if(this.x * this.x + this.y * this.y < 9.9999999999999984e-015 || v.x * v.x + v.y * v.y < 9.9999999999999984e-015) return NaN;
+		if(Math.abs(this.x * v.y - this.y * v.x) < 9.99999999999999841e-15) return NaN;
+		if(this.x * this.x + this.y * this.y < 9.99999999999999841e-15 || v.x * v.x + v.y * v.y < 9.99999999999999841e-15) return NaN;
 		flixel_math_FlxVector._vector1 = b.clone(flixel_math_FlxVector._vector1);
 		flixel_math_FlxVector._vector1.subtractPoint(a);
 		return flixel_math_FlxVector._vector1.perpProduct(v) / (this.y * v.x + -this.x * v.y);
@@ -43979,12 +43832,6 @@ lime__$backend_html5_HTML5Application.prototype = {
 		window.addEventListener("resize",$bind(this,this.handleWindowEvent),false);
 		window.addEventListener("beforeunload",$bind(this,this.handleWindowEvent),false);
 		
-			if (!CanvasRenderingContext2D.prototype.isPointInStroke) {
-				CanvasRenderingContext2D.prototype.isPointInStroke = function (path, x, y) {
-					return false;
-				};
-			}
-			
 			var lastTime = 0;
 			var vendors = ['ms', 'moz', 'webkit', 'o'];
 			for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
@@ -44535,7 +44382,6 @@ lime__$backend_html5_HTML5Window.prototype = {
 		} else this.parent.onMouseWheel.dispatch(event.deltaX,-event.deltaY);
 	}
 	,handleResize: function() {
-		return false;
 		var stretch = this.parent.__fullscreen || this.setWidth == 0 && this.setHeight == 0;
 		if(this.element != null && (this.div == null || this.div != null && stretch)) {
 			if(stretch) {
@@ -44709,9 +44555,6 @@ lime__$backend_html5_HTML5Window.prototype = {
 	}
 	,setIcon: function(image) {
 	}
-	,setMaximized: function(value) {
-		return false;
-	}
 	,setMinimized: function(value) {
 		return false;
 	}
@@ -44802,8 +44645,6 @@ lime_app_Module.prototype = {
 	,onWindowCreate: function(window) {
 	}
 	,onWindowDeactivate: function(window) {
-	}
-	,onWindowDropFile: function(window,file) {
 	}
 	,onWindowEnter: function(window) {
 	}
@@ -44922,99 +44763,94 @@ lime_app_Application.prototype = $extend(lime_app_Module.prototype,{
 				f3(a13);
 			};
 		})($bind(this,this.onWindowDeactivate),window));
-		window.onDropFile.add((function(f4,a14) {
-			return function(a2) {
-				f4(a14,a2);
+		window.onEnter.add((function(f4,a14) {
+			return function() {
+				f4(a14);
 			};
-		})($bind(this,this.onWindowDropFile),window));
-		window.onEnter.add((function(f5,a15) {
+		})($bind(this,this.onWindowEnter),window));
+		window.onFocusIn.add((function(f5,a15) {
 			return function() {
 				f5(a15);
 			};
-		})($bind(this,this.onWindowEnter),window));
-		window.onFocusIn.add((function(f6,a16) {
+		})($bind(this,this.onWindowFocusIn),window));
+		window.onFocusOut.add((function(f6,a16) {
 			return function() {
 				f6(a16);
 			};
-		})($bind(this,this.onWindowFocusIn),window));
-		window.onFocusOut.add((function(f7,a17) {
+		})($bind(this,this.onWindowFocusOut),window));
+		window.onFullscreen.add((function(f7,a17) {
 			return function() {
 				f7(a17);
 			};
-		})($bind(this,this.onWindowFocusOut),window));
-		window.onFullscreen.add((function(f8,a18) {
-			return function() {
-				f8(a18);
-			};
 		})($bind(this,this.onWindowFullscreen),window));
-		window.onKeyDown.add((function(f9,a19) {
-			return function(a21,a3) {
-				f9(a19,a21,a3);
+		window.onKeyDown.add((function(f8,a18) {
+			return function(a2,a3) {
+				f8(a18,a2,a3);
 			};
 		})($bind(this,this.onKeyDown),window));
-		window.onKeyUp.add((function(f10,a110) {
-			return function(a22,a31) {
-				f10(a110,a22,a31);
+		window.onKeyUp.add((function(f9,a19) {
+			return function(a21,a31) {
+				f9(a19,a21,a31);
 			};
 		})($bind(this,this.onKeyUp),window));
-		window.onLeave.add((function(f11,a111) {
+		window.onLeave.add((function(f10,a110) {
+			return function() {
+				f10(a110);
+			};
+		})($bind(this,this.onWindowLeave),window));
+		window.onMinimize.add((function(f11,a111) {
 			return function() {
 				f11(a111);
 			};
-		})($bind(this,this.onWindowLeave),window));
-		window.onMinimize.add((function(f12,a112) {
-			return function() {
-				f12(a112);
-			};
 		})($bind(this,this.onWindowMinimize),window));
-		window.onMouseDown.add((function(f13,a113) {
-			return function(x,y,a23) {
-				f13(a113,x,y,a23);
+		window.onMouseDown.add((function(f12,a112) {
+			return function(x,y,a22) {
+				f12(a112,x,y,a22);
 			};
 		})($bind(this,this.onMouseDown),window));
-		window.onMouseMove.add((function(f14,a114) {
+		window.onMouseMove.add((function(f13,a113) {
 			return function(x1,y1) {
-				f14(a114,x1,y1);
+				f13(a113,x1,y1);
 			};
 		})($bind(this,this.onMouseMove),window));
-		window.onMouseMoveRelative.add((function(f15,a115) {
+		window.onMouseMoveRelative.add((function(f14,a114) {
 			return function(x2,y2) {
-				f15(a115,x2,y2);
+				f14(a114,x2,y2);
 			};
 		})($bind(this,this.onMouseMoveRelative),window));
-		window.onMouseUp.add((function(f16,a116) {
-			return function(x3,y3,a24) {
-				f16(a116,x3,y3,a24);
+		window.onMouseUp.add((function(f15,a115) {
+			return function(x3,y3,a23) {
+				f15(a115,x3,y3,a23);
 			};
 		})($bind(this,this.onMouseUp),window));
-		window.onMouseWheel.add((function(f17,a117) {
-			return function(a25,a32) {
-				f17(a117,a25,a32);
+		window.onMouseWheel.add((function(f16,a116) {
+			return function(a24,a32) {
+				f16(a116,a24,a32);
 			};
 		})($bind(this,this.onMouseWheel),window));
-		window.onMove.add((function(f18,a118) {
+		window.onMove.add((function(f17,a117) {
 			return function(x4,y4) {
-				f18(a118,x4,y4);
+				f17(a117,x4,y4);
 			};
 		})($bind(this,this.onWindowMove),window));
-		window.onResize.add((function(f19,a119) {
-			return function(a26,a33) {
-				f19(a119,a26,a33);
+		window.onResize.add((function(f18,a118) {
+			return function(a25,a33) {
+				f18(a118,a25,a33);
 			};
 		})($bind(this,this.onWindowResize),window));
-		window.onRestore.add((function(f20,a120) {
+		window.onRestore.add((function(f19,a119) {
 			return function() {
-				f20(a120);
+				f19(a119);
 			};
 		})($bind(this,this.onWindowRestore),window));
-		window.onTextEdit.add((function(f21,a121) {
-			return function(a27,a34,a4) {
-				f21(a121,a27,a34,a4);
+		window.onTextEdit.add((function(f20,a120) {
+			return function(a26,a34,a4) {
+				f20(a120,a26,a34,a4);
 			};
 		})($bind(this,this.onTextEdit),window));
-		window.onTextInput.add((function(f22,a122) {
-			return function(a28) {
-				f22(a122,a28);
+		window.onTextInput.add((function(f21,a121) {
+			return function(a27) {
+				f21(a121,a27);
 			};
 		})($bind(this,this.onTextInput),window));
 		if(window.renderer == null) {
@@ -45327,15 +45163,6 @@ lime_app_Application.prototype = $extend(lime_app_Module.prototype,{
 			var module = _g1[_g];
 			++_g;
 			module.onWindowDeactivate(window);
-		}
-	}
-	,onWindowDropFile: function(window,file) {
-		var _g = 0;
-		var _g1 = this.modules;
-		while(_g < _g1.length) {
-			var module = _g1[_g];
-			++_g;
-			module.onWindowDropFile(window,file);
 		}
 	}
 	,onWindowEnter: function(window) {
@@ -54985,7 +54812,6 @@ var lime_ui_Window = function(config) {
 	this.onFocusOut = new lime_app_Event_$Void_$Void();
 	this.onFocusIn = new lime_app_Event_$Void_$Void();
 	this.onEnter = new lime_app_Event_$Void_$Void();
-	this.onDropFile = new lime_app_Event_$String_$Void();
 	this.onDeactivate = new lime_app_Event_$Void_$Void();
 	this.onCreate = new lime_app_Event_$Void_$Void();
 	this.onClose = new lime_app_Event_$Void_$Void();
@@ -55073,18 +54899,10 @@ lime_ui_Window.prototype = {
 		this.resize(this.__width,value);
 		return this.__height;
 	}
-	,get_maximized: function() {
-		return this.__maximized;
-	}
-	,set_maximized: function(value) {
-		this.__minimized = false;
-		return this.__maximized = this.backend.setMaximized(value);
-	}
 	,get_minimized: function() {
 		return this.__minimized;
 	}
 	,set_minimized: function(value) {
-		this.__maximized = false;
 		return this.__minimized = this.backend.setMinimized(value);
 	}
 	,get_resizable: function() {
@@ -55125,7 +54943,7 @@ lime_ui_Window.prototype = {
 		return this.__y;
 	}
 	,__class__: lime_ui_Window
-	,__properties__: {set_y:"set_y",get_y:"get_y",set_x:"set_x",get_x:"get_x",set_width:"set_width",get_width:"get_width",set_title:"set_title",get_title:"get_title",get_scale:"get_scale",set_resizable:"set_resizable",get_resizable:"get_resizable",set_minimized:"set_minimized",get_minimized:"get_minimized",set_maximized:"set_maximized",get_maximized:"get_maximized",set_height:"set_height",get_height:"get_height",set_fullscreen:"set_fullscreen",get_fullscreen:"get_fullscreen",set_enableTextEvents:"set_enableTextEvents",get_enableTextEvents:"get_enableTextEvents",get_display:"get_display",set_borderless:"set_borderless",get_borderless:"get_borderless"}
+	,__properties__: {set_y:"set_y",get_y:"get_y",set_x:"set_x",get_x:"get_x",set_width:"set_width",get_width:"get_width",set_title:"set_title",get_title:"get_title",get_scale:"get_scale",set_resizable:"set_resizable",get_resizable:"get_resizable",set_minimized:"set_minimized",get_minimized:"get_minimized",set_height:"set_height",get_height:"get_height",set_fullscreen:"set_fullscreen",get_fullscreen:"get_fullscreen",set_enableTextEvents:"set_enableTextEvents",get_enableTextEvents:"get_enableTextEvents",get_display:"get_display",set_borderless:"set_borderless",get_borderless:"get_borderless"}
 };
 var lime_utils_TAError = $hxClasses["lime.utils.TAError"] = { __ename__ : ["lime","utils","TAError"], __constructs__ : ["RangeError"] };
 lime_utils_TAError.RangeError = ["RangeError",0];
@@ -55702,6 +55520,7 @@ openfl_display_MovieClip.prototype = $extend(openfl_display_Sprite.prototype,{
 		if(method != null) {
 			if(this.__frameScripts == null) this.__frameScripts = new haxe_ds_IntMap();
 			this.__frameScripts.h[index] = method;
+			haxe_Log.trace("added script index " + index,{ fileName : "MovieClip.hx", lineNumber : 47, className : "openfl.display.MovieClip", methodName : "addFrameScript"});
 		} else if(this.__frameScripts != null) this.__frameScripts.remove(index);
 	}
 	,gotoAndPlay: function(frame,scene) {
@@ -56140,80 +55959,137 @@ openfl__$internal_renderer_DrawCommandBuffer.prototype = {
 			++_g;
 			switch(type[1]) {
 			case 0:
-				var c = data.readBeginBitmapFill();
-				this.beginBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c));
+				var c;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
+				c = data;
+				this.beginBitmapFill(c.buffer.o[c.oPos],c.buffer.o[c.oPos + 1],c.buffer.b[c.bPos],c.buffer.b[c.bPos + 1]);
 				break;
 			case 1:
-				var c1 = data.readBeginFill();
-				this.beginFill(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c1),openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c1));
+				var c1;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
+				c1 = data;
+				this.beginFill(c1.buffer.i[c1.iPos],c1.buffer.f[c1.fPos]);
 				break;
 			case 2:
-				var c2 = data.readBeginGradientFill();
-				this.beginGradientFill(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c2),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c2));
+				var c2;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
+				c2 = data;
+				this.beginGradientFill(c2.buffer.o[c2.oPos],c2.buffer.ii[c2.iiPos],c2.buffer.ff[c2.ffPos],c2.buffer.ii[c2.iiPos + 1],c2.buffer.o[c2.oPos + 1],c2.buffer.o[c2.oPos + 2],c2.buffer.o[c2.oPos + 3],c2.buffer.f[c2.fPos]);
 				break;
 			case 3:
-				var c3 = data.readCubicCurveTo();
-				this.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c3),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c3),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c3),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c3),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c3),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c3));
+				var c3;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
+				c3 = data;
+				this.cubicCurveTo(c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1],c3.buffer.f[c3.fPos + 2],c3.buffer.f[c3.fPos + 3],c3.buffer.f[c3.fPos + 4],c3.buffer.f[c3.fPos + 5]);
 				break;
 			case 4:
-				var c4 = data.readCurveTo();
-				this.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c4),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c4),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c4),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c4));
+				var c4;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
+				c4 = data;
+				this.curveTo(c4.buffer.f[c4.fPos],c4.buffer.f[c4.fPos + 1],c4.buffer.f[c4.fPos + 2],c4.buffer.f[c4.fPos + 3]);
 				break;
 			case 5:
-				var c5 = data.readDrawCircle();
-				this.drawCircle(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c5),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c5),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c5));
+				var c5;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
+				c5 = data;
+				this.drawCircle(c5.buffer.f[c5.fPos],c5.buffer.f[c5.fPos + 1],c5.buffer.f[c5.fPos + 2]);
 				break;
 			case 6:
-				var c6 = data.readDrawEllipse();
-				this.drawEllipse(openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c6),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c6),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c6),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c6));
+				var c6;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
+				c6 = data;
+				this.drawEllipse(c6.buffer.f[c6.fPos],c6.buffer.f[c6.fPos + 1],c6.buffer.f[c6.fPos + 2],c6.buffer.f[c6.fPos + 3]);
 				break;
 			case 7:
-				var c7 = data.readDrawPath();
-				this.drawPath(openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_commands(c7),openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c7),openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_winding(c7));
+				var c7;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_PATH;
+				c7 = data;
+				this.drawPath(c7.buffer.o[c7.oPos],c7.buffer.o[c7.oPos + 1],c7.buffer.o[c7.oPos + 2]);
 				break;
 			case 8:
-				var c8 = data.readDrawRect();
-				this.drawRect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c8),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c8),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c8),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c8));
+				var c8;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
+				c8 = data;
+				this.drawRect(c8.buffer.f[c8.fPos],c8.buffer.f[c8.fPos + 1],c8.buffer.f[c8.fPos + 2],c8.buffer.f[c8.fPos + 3]);
 				break;
 			case 9:
-				var c9 = data.readDrawRoundRect();
-				this.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c9),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c9),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c9),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c9),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c9),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c9));
+				var c9;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
+				c9 = data;
+				this.drawRoundRect(c9.buffer.f[c9.fPos],c9.buffer.f[c9.fPos + 1],c9.buffer.f[c9.fPos + 2],c9.buffer.f[c9.fPos + 3],c9.buffer.f[c9.fPos + 4],c9.buffer.o[c9.oPos]);
 				break;
 			case 10:
-				var c10 = data.readDrawTiles();
-				this.drawTiles(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c10),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c10),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_smooth(c10),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c10),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_shader(c10),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c10));
+				var c10;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TILES;
+				c10 = data;
+				this.drawTiles(c10.buffer.ts[c10.tsPos],c10.buffer.ff[c10.ffPos],c10.buffer.b[c10.bPos],c10.buffer.i[c10.iPos],c10.buffer.o[c10.oPos],c10.buffer.i[c10.iPos + 1]);
 				break;
 			case 11:
-				var c11 = data.readDrawTriangles();
-				this.drawTriangles(openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_vertices(c11),openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_indices(c11),openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData(c11),openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_culling(c11));
+				var c11;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TRIANGLES;
+				c11 = data;
+				this.drawTriangles(c11.buffer.o[c11.oPos],c11.buffer.o[c11.oPos + 1],c11.buffer.o[c11.oPos + 2],c11.buffer.o[c11.oPos + 3]);
 				break;
 			case 12:
-				var c12 = data.readEndFill();
+				var c12;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.END_FILL;
+				c12 = data;
 				this.endFill();
 				break;
 			case 13:
-				var c13 = data.readLineBitmapStyle();
-				this.lineBitmapStyle(openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap(c13),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_matrix(c13),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat(c13),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_smooth(c13));
+				var c13;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
+				c13 = data;
+				this.lineBitmapStyle(c13.buffer.o[c13.oPos],c13.buffer.o[c13.oPos + 1],c13.buffer.b[c13.bPos],c13.buffer.b[c13.bPos + 1]);
 				break;
 			case 14:
-				var c14 = data.readLineGradientStyle();
-				this.lineGradientStyle(openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod(c14),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio(c14));
+				var c14;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
+				c14 = data;
+				this.lineGradientStyle(c14.buffer.o[c14.oPos],c14.buffer.ii[c14.iiPos],c14.buffer.ff[c14.ffPos],c14.buffer.ii[c14.iiPos + 1],c14.buffer.o[c14.oPos + 1],c14.buffer.o[c14.oPos + 2],c14.buffer.o[c14.oPos + 3],c14.buffer.f[c14.fPos]);
 				break;
 			case 15:
-				var c15 = data.readLineStyle();
-				this.lineStyle(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_pixelHinting(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_scaleMode(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c15),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c15));
+				var c15;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
+				c15 = data;
+				this.lineStyle(c15.buffer.o[c15.oPos],c15.buffer.i[c15.iPos],c15.buffer.f[c15.fPos],c15.buffer.b[c15.bPos],c15.buffer.o[c15.oPos + 1],c15.buffer.o[c15.oPos + 2],c15.buffer.o[c15.oPos + 3],c15.buffer.f[c15.fPos + 1]);
 				break;
 			case 16:
-				var c16 = data.readLineTo();
-				this.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c16),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c16));
+				var c16;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
+				c16 = data;
+				this.lineTo(c16.buffer.f[c16.fPos],c16.buffer.f[c16.fPos + 1]);
 				break;
 			case 17:
-				var c17 = data.readMoveTo();
-				this.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c17),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c17));
+				var c17;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
+				c17 = data;
+				this.moveTo(c17.buffer.f[c17.fPos],c17.buffer.f[c17.fPos + 1]);
 				break;
 			case 18:
-				var c18 = data.readOverrideMatrix();
-				this.overrideMatrix(openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$.get_matrix(c18));
+				var c18;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.OVERRIDE_MATRIX;
+				c18 = data;
+				this.overrideMatrix(c18.buffer.o[c18.oPos]);
 				break;
 			default:
 			}
@@ -56501,97 +56377,97 @@ openfl__$internal_renderer_DrawCommandReader.prototype = {
 	,readBeginBitmapFill: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
-		return openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$._new(this);
+		return this;
 	}
 	,readBeginFill: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
-		return openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$._new(this);
+		return this;
 	}
 	,readBeginGradientFill: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
-		return openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$._new(this);
+		return this;
 	}
 	,readCubicCurveTo: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
-		return openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$._new(this);
+		return this;
 	}
 	,readCurveTo: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
-		return openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$._new(this);
+		return this;
 	}
 	,readDrawCircle: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
-		return openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$._new(this);
+		return this;
 	}
 	,readDrawEllipse: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
-		return openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$._new(this);
+		return this;
 	}
 	,readDrawPath: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_PATH;
-		return openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$._new(this);
+		return this;
 	}
 	,readDrawRect: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
-		return openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$._new(this);
+		return this;
 	}
 	,readDrawRoundRect: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
-		return openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$._new(this);
+		return this;
 	}
 	,readDrawTiles: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TILES;
-		return openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$._new(this);
+		return this;
 	}
 	,readDrawTriangles: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TRIANGLES;
-		return openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$._new(this);
+		return this;
 	}
 	,readEndFill: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.END_FILL;
-		return openfl__$internal_renderer__$DrawCommandReader_EndFillView_$Impl_$._new(this);
+		return this;
 	}
 	,readLineBitmapStyle: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
-		return openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$._new(this);
+		return this;
 	}
 	,readLineGradientStyle: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
-		return openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$._new(this);
+		return this;
 	}
 	,readLineStyle: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
-		return openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$._new(this);
+		return this;
 	}
 	,readLineTo: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
-		return openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$._new(this);
+		return this;
 	}
 	,readMoveTo: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
-		return openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$._new(this);
+		return this;
 	}
 	,readOverrideMatrix: function() {
 		this.advance();
 		this.prev = openfl__$internal_renderer_DrawCommandType.OVERRIDE_MATRIX;
-		return openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$._new(this);
+		return this;
 	}
 	,reset: function() {
 		this.bPos = this.iPos = this.fPos = this.oPos = this.ffPos = this.iiPos = this.tsPos = 0;
@@ -56613,16 +56489,16 @@ openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$._new 
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap = function(this1) {
-	return this1.obj(0);
+	return this1.buffer.o[this1.oPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix = function(this1) {
-	return this1.obj(1);
+	return this1.buffer.o[this1.oPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat = function(this1) {
-	return this1.bool(0);
+	return this1.buffer.b[this1.bPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth = function(this1) {
-	return this1.bool(1);
+	return this1.buffer.b[this1.bPos + 1];
 };
 var openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.BeginFillView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$;
@@ -56632,10 +56508,10 @@ openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$._new = func
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color = function(this1) {
-	return this1["int"](0);
+	return this1.buffer.i[this1.iPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 var openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.BeginGradientFillView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$;
@@ -56645,28 +56521,28 @@ openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$._ne
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type = function(this1) {
-	return this1.obj(0);
+	return this1.buffer.o[this1.oPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors = function(this1) {
-	return this1.iArr(0);
+	return this1.buffer.ii[this1.iiPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas = function(this1) {
-	return this1.fArr(0);
+	return this1.buffer.ff[this1.ffPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios = function(this1) {
-	return this1.iArr(1);
+	return this1.buffer.ii[this1.iiPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix = function(this1) {
-	return this1.obj(1);
+	return this1.buffer.o[this1.oPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod = function(this1) {
-	return this1.obj(2);
+	return this1.buffer.o[this1.oPos + 2];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod = function(this1) {
-	return this1.obj(3);
+	return this1.buffer.o[this1.oPos + 3];
 };
 openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 var openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.CubicCurveToView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$;
@@ -56676,22 +56552,22 @@ openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$._new = f
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1 = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1 = function(this1) {
-	return this1["float"](1);
+	return this1.buffer.f[this1.fPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2 = function(this1) {
-	return this1["float"](2);
+	return this1.buffer.f[this1.fPos + 2];
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2 = function(this1) {
-	return this1["float"](3);
+	return this1.buffer.f[this1.fPos + 3];
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX = function(this1) {
-	return this1["float"](4);
+	return this1.buffer.f[this1.fPos + 4];
 };
 openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY = function(this1) {
-	return this1["float"](5);
+	return this1.buffer.f[this1.fPos + 5];
 };
 var openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.CurveToView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$;
@@ -56701,16 +56577,16 @@ openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$._new = functi
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY = function(this1) {
-	return this1["float"](1);
+	return this1.buffer.f[this1.fPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX = function(this1) {
-	return this1["float"](2);
+	return this1.buffer.f[this1.fPos + 2];
 };
 openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY = function(this1) {
-	return this1["float"](3);
+	return this1.buffer.f[this1.fPos + 3];
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawCircleView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$;
@@ -56720,13 +56596,13 @@ openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$._new = fun
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y = function(this1) {
-	return this1["float"](1);
+	return this1.buffer.f[this1.fPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius = function(this1) {
-	return this1["float"](2);
+	return this1.buffer.f[this1.fPos + 2];
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawEllipseView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$;
@@ -56736,16 +56612,16 @@ openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$._new = fu
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y = function(this1) {
-	return this1["float"](1);
+	return this1.buffer.f[this1.fPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width = function(this1) {
-	return this1["float"](2);
+	return this1.buffer.f[this1.fPos + 2];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height = function(this1) {
-	return this1["float"](3);
+	return this1.buffer.f[this1.fPos + 3];
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawPathView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$;
@@ -56755,13 +56631,13 @@ openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$._new = funct
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_commands = function(this1) {
-	return this1.obj(0);
+	return this1.buffer.o[this1.oPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data = function(this1) {
-	return this1.obj(1);
+	return this1.buffer.o[this1.oPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_winding = function(this1) {
-	return this1.obj(2);
+	return this1.buffer.o[this1.oPos + 2];
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawRectView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$;
@@ -56771,16 +56647,16 @@ openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$._new = funct
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y = function(this1) {
-	return this1["float"](1);
+	return this1.buffer.f[this1.fPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width = function(this1) {
-	return this1["float"](2);
+	return this1.buffer.f[this1.fPos + 2];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height = function(this1) {
-	return this1["float"](3);
+	return this1.buffer.f[this1.fPos + 3];
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawRoundRectView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$;
@@ -56790,22 +56666,22 @@ openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$._new = 
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y = function(this1) {
-	return this1["float"](1);
+	return this1.buffer.f[this1.fPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width = function(this1) {
-	return this1["float"](2);
+	return this1.buffer.f[this1.fPos + 2];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height = function(this1) {
-	return this1["float"](3);
+	return this1.buffer.f[this1.fPos + 3];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth = function(this1) {
-	return this1["float"](4);
+	return this1.buffer.f[this1.fPos + 4];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight = function(this1) {
-	return this1.obj(0);
+	return this1.buffer.o[this1.oPos];
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawTilesView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$;
@@ -56815,22 +56691,22 @@ openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$._new = func
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet = function(this1) {
-	return this1.tileSheet(0);
+	return this1.buffer.ts[this1.tsPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData = function(this1) {
-	return this1.fArr(0);
+	return this1.buffer.ff[this1.ffPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_smooth = function(this1) {
-	return this1.bool(0);
+	return this1.buffer.b[this1.bPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags = function(this1) {
-	return this1["int"](0);
+	return this1.buffer.i[this1.iPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_shader = function(this1) {
-	return this1.obj(0);
+	return this1.buffer.o[this1.oPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count = function(this1) {
-	return this1["int"](1);
+	return this1.buffer.i[this1.iPos + 1];
 };
 var openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.DrawTrianglesView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$;
@@ -56840,16 +56716,16 @@ openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$._new = 
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_vertices = function(this1) {
-	return this1.obj(0);
+	return this1.buffer.o[this1.oPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_indices = function(this1) {
-	return this1.obj(1);
+	return this1.buffer.o[this1.oPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData = function(this1) {
-	return this1.obj(2);
+	return this1.buffer.o[this1.oPos + 2];
 };
 openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_culling = function(this1) {
-	return this1.obj(3);
+	return this1.buffer.o[this1.oPos + 3];
 };
 var openfl__$internal_renderer__$DrawCommandReader_EndFillView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.EndFillView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_EndFillView_$Impl_$;
@@ -56865,16 +56741,16 @@ openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$._new 
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap = function(this1) {
-	return this1.obj(0);
+	return this1.buffer.o[this1.oPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_matrix = function(this1) {
-	return this1.obj(1);
+	return this1.buffer.o[this1.oPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat = function(this1) {
-	return this1.bool(0);
+	return this1.buffer.b[this1.bPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_smooth = function(this1) {
-	return this1.bool(1);
+	return this1.buffer.b[this1.bPos + 1];
 };
 var openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.LineGradientStyleView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$;
@@ -56884,28 +56760,28 @@ openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$._ne
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type = function(this1) {
-	return this1.obj(0);
+	return this1.buffer.o[this1.oPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors = function(this1) {
-	return this1.iArr(0);
+	return this1.buffer.ii[this1.iiPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas = function(this1) {
-	return this1.fArr(0);
+	return this1.buffer.ff[this1.ffPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios = function(this1) {
-	return this1.iArr(1);
+	return this1.buffer.ii[this1.iiPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix = function(this1) {
-	return this1.obj(1);
+	return this1.buffer.o[this1.oPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod = function(this1) {
-	return this1.obj(2);
+	return this1.buffer.o[this1.oPos + 2];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod = function(this1) {
-	return this1.obj(3);
+	return this1.buffer.o[this1.oPos + 3];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 var openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.LineStyleView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$;
@@ -56915,28 +56791,28 @@ openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$._new = func
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness = function(this1) {
-	return this1.obj(0);
+	return this1.buffer.o[this1.oPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color = function(this1) {
-	return this1["int"](0);
+	return this1.buffer.i[this1.iPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_pixelHinting = function(this1) {
-	return this1.bool(0);
+	return this1.buffer.b[this1.bPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_scaleMode = function(this1) {
-	return this1.obj(1);
+	return this1.buffer.o[this1.oPos + 1];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps = function(this1) {
-	return this1.obj(2);
+	return this1.buffer.o[this1.oPos + 2];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints = function(this1) {
-	return this1.obj(3);
+	return this1.buffer.o[this1.oPos + 3];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit = function(this1) {
-	return this1["float"](1);
+	return this1.buffer.f[this1.fPos + 1];
 };
 var openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.LineToView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$;
@@ -56946,10 +56822,10 @@ openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$._new = functio
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y = function(this1) {
-	return this1["float"](1);
+	return this1.buffer.f[this1.fPos + 1];
 };
 var openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.MoveToView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$;
@@ -56959,10 +56835,10 @@ openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$._new = functio
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x = function(this1) {
-	return this1["float"](0);
+	return this1.buffer.f[this1.fPos];
 };
 openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y = function(this1) {
-	return this1["float"](1);
+	return this1.buffer.f[this1.fPos + 1];
 };
 var openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$ = {};
 $hxClasses["openfl._internal.renderer._DrawCommandReader.OverrideMatrixView_Impl_"] = openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$;
@@ -56972,7 +56848,7 @@ openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$._new =
 	return d;
 };
 openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$.get_matrix = function(this1) {
-	return this1.obj(0);
+	return this1.buffer.o[this1.oPos];
 };
 var openfl__$internal_renderer_DrawCommandType = $hxClasses["openfl._internal.renderer.DrawCommandType"] = { __ename__ : ["openfl","_internal","renderer","DrawCommandType"], __constructs__ : ["BEGIN_BITMAP_FILL","BEGIN_FILL","BEGIN_GRADIENT_FILL","CUBIC_CURVE_TO","CURVE_TO","DRAW_CIRCLE","DRAW_ELLIPSE","DRAW_PATH","DRAW_RECT","DRAW_ROUND_RECT","DRAW_TILES","DRAW_TRIANGLES","END_FILL","LINE_BITMAP_STYLE","LINE_GRADIENT_STYLE","LINE_STYLE","LINE_TO","MOVE_TO","OVERRIDE_MATRIX","UNKNOWN"] };
 openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL = ["BEGIN_BITMAP_FILL",0];
@@ -57437,33 +57313,48 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 			++_g;
 			switch(type[1]) {
 			case 3:
-				var c = data.readCubicCurveTo();
+				var c;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
+				c = data;
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.curveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c) - offsetY);
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.curveTo(c.buffer.f[c.fPos] - offsetX,c.buffer.f[c.fPos + 1] - offsetY,c.buffer.f[c.fPos + 2] - offsetX,c.buffer.f[c.fPos + 3] - offsetY,c.buffer.f[c.fPos + 4] - offsetX,c.buffer.f[c.fPos + 5] - offsetY);
 				break;
 			case 4:
-				var c1 = data.readCurveTo();
+				var c1;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
+				c1 = data;
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.quadraticCurveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1) - offsetY);
+				openfl__$internal_renderer_cairo_CairoGraphics.quadraticCurveTo(c1.buffer.f[c1.fPos] - offsetX,c1.buffer.f[c1.fPos + 1] - offsetY,c1.buffer.f[c1.fPos + 2] - offsetX,c1.buffer.f[c1.fPos + 3] - offsetY);
 				break;
 			case 5:
-				var c2 = data.readDrawCircle();
+				var c2;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
+				c2 = data;
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX + openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY);
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.arc(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),0,Math.PI * 2);
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(c2.buffer.f[c2.fPos] - offsetX + c2.buffer.f[c2.fPos + 2],c2.buffer.f[c2.fPos + 1] - offsetY);
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.arc(c2.buffer.f[c2.fPos] - offsetX,c2.buffer.f[c2.fPos + 1] - offsetY,c2.buffer.f[c2.fPos + 2],0,Math.PI * 2);
 				break;
 			case 8:
-				var c3 = data.readDrawRect();
+				var c3;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
+				c3 = data;
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.rectangle(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c3) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c3) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c3),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c3));
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.rectangle(c3.buffer.f[c3.fPos] - offsetX,c3.buffer.f[c3.fPos + 1] - offsetY,c3.buffer.f[c3.fPos + 2],c3.buffer.f[c3.fPos + 3]);
 				break;
 			case 6:
-				var c4 = data.readDrawEllipse();
+				var c4;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
+				c4 = data;
 				hasPath = true;
-				var x = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c4);
-				var y = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c4);
-				var width = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c4);
-				var height = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c4);
+				var x = c4.buffer.f[c4.fPos];
+				var y = c4.buffer.f[c4.fPos + 1];
+				var width = c4.buffer.f[c4.fPos + 2];
+				var height = c4.buffer.f[c4.fPos + 3];
 				x -= offsetX;
 				y -= offsetY;
 				var kappa = .5522848;
@@ -57480,36 +57371,48 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.curveTo(xm - ox,ye,x,ym + oy,x,ym);
 				break;
 			case 9:
-				var c5 = data.readDrawRoundRect();
+				var c5;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
+				c5 = data;
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c5) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c5) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c5));
+				openfl__$internal_renderer_cairo_CairoGraphics.drawRoundRect(c5.buffer.f[c5.fPos] - offsetX,c5.buffer.f[c5.fPos + 1] - offsetY,c5.buffer.f[c5.fPos + 2],c5.buffer.f[c5.fPos + 3],c5.buffer.f[c5.fPos + 4],c5.buffer.o[c5.oPos]);
 				break;
 			case 16:
-				var c6 = data.readLineTo();
+				var c6;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
+				c6 = data;
 				hasPath = true;
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6) - offsetX,openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6) - offsetY);
-				positionX = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6);
-				positionY = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6);
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.lineTo(c6.buffer.f[c6.fPos] - offsetX,c6.buffer.f[c6.fPos + 1] - offsetY);
+				positionX = c6.buffer.f[c6.fPos];
+				positionY = c6.buffer.f[c6.fPos + 1];
 				break;
 			case 17:
-				var c7 = data.readMoveTo();
-				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7) - offsetX,openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7) - offsetY);
-				positionX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7);
-				positionY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7);
+				var c7;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
+				c7 = data;
+				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(c7.buffer.f[c7.fPos] - offsetX,c7.buffer.f[c7.fPos + 1] - offsetY);
+				positionX = c7.buffer.f[c7.fPos];
+				positionY = c7.buffer.f[c7.fPos + 1];
 				closeGap = true;
-				startX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7);
-				startY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7);
+				startX = c7.buffer.f[c7.fPos];
+				startY = c7.buffer.f[c7.fPos + 1];
 				break;
 			case 15:
-				var c8 = data.readLineStyle();
+				var c8;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
+				c8 = data;
 				if(stroke && openfl__$internal_renderer_cairo_CairoGraphics.hasStroke) openfl__$internal_renderer_cairo_CairoGraphics.closePath();
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(positionX - offsetX,positionY - offsetY);
-				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c8) == null) openfl__$internal_renderer_cairo_CairoGraphics.hasStroke = false; else {
+				if(c8.buffer.o[c8.oPos] == null) openfl__$internal_renderer_cairo_CairoGraphics.hasStroke = false; else {
 					openfl__$internal_renderer_cairo_CairoGraphics.hasStroke = true;
-					openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineWidth(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c8) > 0?openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c8):1);
-					if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c8) == null) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineJoin(1); else openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineJoin((function($this) {
+					openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineWidth(c8.buffer.o[c8.oPos] > 0?c8.buffer.o[c8.oPos]:1);
+					if(c8.buffer.o[c8.oPos + 3] == null) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineJoin(1); else openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineJoin((function($this) {
 						var $r;
-						var _g2 = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c8);
+						var _g2 = c8.buffer.o[c8.oPos + 3];
 						$r = (function($this) {
 							var $r;
 							switch(_g2) {
@@ -57526,9 +57429,9 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 						}($this));
 						return $r;
 					}(this)));
-					if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c8) == null) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineCap(1); else openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineCap((function($this) {
+					if(c8.buffer.o[c8.oPos + 2] == null) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineCap(1); else openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_lineCap((function($this) {
 						var $r;
-						var _g21 = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c8);
+						var _g21 = c8.buffer.o[c8.oPos + 2];
 						$r = (function($this) {
 							var $r;
 							switch(_g21) {
@@ -57545,55 +57448,73 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 						}($this));
 						return $r;
 					}(this)));
-					openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_miterLimit(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c8));
-					var r = ((openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c8) & 16711680) >>> 16) / 255;
-					var g = ((openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c8) & 65280) >>> 8) / 255;
-					var b = (openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c8) & 255) / 255;
-					if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c8) == 1) openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGB(r,g,b); else openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGBA(r,g,b,openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c8));
+					openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_miterLimit(c8.buffer.f[c8.fPos + 1]);
+					var r = ((c8.buffer.i[c8.iPos] & 16711680) >>> 16) / 255;
+					var g = ((c8.buffer.i[c8.iPos] & 65280) >>> 8) / 255;
+					var b = (c8.buffer.i[c8.iPos] & 255) / 255;
+					if(c8.buffer.f[c8.fPos] == 1) openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGB(r,g,b); else openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGBA(r,g,b,c8.buffer.f[c8.fPos]);
 				}
 				break;
 			case 14:
-				var c9 = data.readLineGradientStyle();
+				var c9;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
+				c9 = data;
 				if(stroke && openfl__$internal_renderer_cairo_CairoGraphics.hasStroke) openfl__$internal_renderer_cairo_CairoGraphics.closePath();
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(positionX - offsetX,positionY - offsetY);
-				openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = openfl__$internal_renderer_cairo_CairoGraphics.createGradientPattern(openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod(c9),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio(c9));
+				openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = openfl__$internal_renderer_cairo_CairoGraphics.createGradientPattern(c9.buffer.o[c9.oPos],c9.buffer.ii[c9.iiPos],c9.buffer.ff[c9.ffPos],c9.buffer.ii[c9.iiPos + 1],c9.buffer.o[c9.oPos + 1],c9.buffer.o[c9.oPos + 2],c9.buffer.o[c9.oPos + 3],c9.buffer.f[c9.fPos]);
 				openfl__$internal_renderer_cairo_CairoGraphics.hasStroke = true;
 				break;
 			case 13:
-				var c10 = data.readLineBitmapStyle();
+				var c10;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
+				c10 = data;
 				if(stroke && openfl__$internal_renderer_cairo_CairoGraphics.hasStroke) openfl__$internal_renderer_cairo_CairoGraphics.closePath();
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.moveTo(positionX - offsetX,positionY - offsetY);
-				openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = openfl__$internal_renderer_cairo_CairoGraphics.createImagePattern(openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap(c10),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_matrix(c10),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat(c10));
+				openfl__$internal_renderer_cairo_CairoGraphics.strokePattern = openfl__$internal_renderer_cairo_CairoGraphics.createImagePattern(c10.buffer.o[c10.oPos],c10.buffer.o[c10.oPos + 1],c10.buffer.b[c10.bPos]);
 				openfl__$internal_renderer_cairo_CairoGraphics.hasStroke = true;
 				break;
 			case 0:
-				var c11 = data.readBeginBitmapFill();
-				openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = openfl__$internal_renderer_cairo_CairoGraphics.createImagePattern(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c11),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c11),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c11));
-				openfl__$internal_renderer_cairo_CairoGraphics.bitmapFill = openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c11);
-				openfl__$internal_renderer_cairo_CairoGraphics.bitmapRepeat = openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c11);
+				var c11;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
+				c11 = data;
+				openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = openfl__$internal_renderer_cairo_CairoGraphics.createImagePattern(c11.buffer.o[c11.oPos],c11.buffer.o[c11.oPos + 1],c11.buffer.b[c11.bPos]);
+				openfl__$internal_renderer_cairo_CairoGraphics.bitmapFill = c11.buffer.o[c11.oPos];
+				openfl__$internal_renderer_cairo_CairoGraphics.bitmapRepeat = c11.buffer.b[c11.bPos];
 				openfl__$internal_renderer_cairo_CairoGraphics.hasFill = true;
 				break;
 			case 1:
-				var c12 = data.readBeginFill();
-				if(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c12) < 0.005) openfl__$internal_renderer_cairo_CairoGraphics.hasFill = false; else {
+				var c12;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
+				c12 = data;
+				if(c12.buffer.f[c12.fPos] < 0.005) openfl__$internal_renderer_cairo_CairoGraphics.hasFill = false; else {
 					if(openfl__$internal_renderer_cairo_CairoGraphics.fillPattern != null) openfl__$internal_renderer_cairo_CairoGraphics.fillPatternMatrix = null;
-					openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGBA(((openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c12) & 16711680) >>> 16) / 255,((openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c12) & 65280) >>> 8) / 255,(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c12) & 255) / 255,openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c12));
+					openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = lime_graphics_cairo__$CairoPattern_CairoPattern_$Impl_$.createRGBA(((c12.buffer.i[c12.iPos] & 16711680) >>> 16) / 255,((c12.buffer.i[c12.iPos] & 65280) >>> 8) / 255,(c12.buffer.i[c12.iPos] & 255) / 255,c12.buffer.f[c12.fPos]);
 					openfl__$internal_renderer_cairo_CairoGraphics.hasFill = true;
 				}
 				openfl__$internal_renderer_cairo_CairoGraphics.bitmapFill = null;
 				break;
 			case 2:
-				var c13 = data.readBeginGradientFill();
+				var c13;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
+				c13 = data;
 				if(openfl__$internal_renderer_cairo_CairoGraphics.fillPattern != null) openfl__$internal_renderer_cairo_CairoGraphics.fillPatternMatrix = null;
-				openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = openfl__$internal_renderer_cairo_CairoGraphics.createGradientPattern(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c13),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c13));
+				openfl__$internal_renderer_cairo_CairoGraphics.fillPattern = openfl__$internal_renderer_cairo_CairoGraphics.createGradientPattern(c13.buffer.o[c13.oPos],c13.buffer.ii[c13.iiPos],c13.buffer.ff[c13.ffPos],c13.buffer.ii[c13.iiPos + 1],c13.buffer.o[c13.oPos + 1],c13.buffer.o[c13.oPos + 2],c13.buffer.o[c13.oPos + 3],c13.buffer.f[c13.fPos]);
 				openfl__$internal_renderer_cairo_CairoGraphics.hasFill = true;
 				openfl__$internal_renderer_cairo_CairoGraphics.bitmapFill = null;
 				break;
 			case 11:
-				var c14 = data.readDrawTriangles();
-				var v = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_vertices(c14);
-				var ind = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_indices(c14);
-				var uvt = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData(c14);
+				var c14;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TRIANGLES;
+				c14 = data;
+				var v = c14.buffer.o[c14.oPos];
+				var ind = c14.buffer.o[c14.oPos + 1];
+				var uvt = c14.buffer.o[c14.oPos + 2];
 				var colorFill = openfl__$internal_renderer_cairo_CairoGraphics.bitmapFill == null;
 				if(colorFill && uvt != null) throw "__break__";
 				var width1 = 0;
@@ -57640,13 +57561,7 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 							uvt.length;
 						}
 					}
-					var skipT;
-					skipT = (function($this) {
-						var $r;
-						var this5 = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData(c14);
-						$r = this5.length;
-						return $r;
-					}(this)) != v.length;
+					var skipT = c14.buffer.o[c14.oPos + 2].length != v.length;
 					var normalizedUVT = openfl__$internal_renderer_cairo_CairoGraphics.normalizeUVT(uvt,skipT);
 					var maxUVT = normalizedUVT.max;
 					uvt = normalizedUVT.uvt;
@@ -57705,7 +57620,7 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 					y2 = v.data[iby];
 					x3 = v.data[icx];
 					y3 = v.data[icy];
-					var _g23 = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_culling(c14);
+					var _g23 = c14.buffer.o[c14.oPos + 3];
 					switch(_g23) {
 					case 2:
 						if(!((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1) < 0)) {
@@ -57762,18 +57677,21 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 				}
 				break;
 			case 10:
-				var c15 = data.readDrawTiles();
-				var useScale = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 1) > 0;
-				var useRotation = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 2) > 0;
+				var c15;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TILES;
+				c15 = data;
+				var useScale = (c15.buffer.i[c15.iPos] & 1) > 0;
+				var useRotation = (c15.buffer.i[c15.iPos] & 2) > 0;
 				var offsetX1 = openfl__$internal_renderer_cairo_CairoGraphics.bounds.x;
 				var offsetY1 = openfl__$internal_renderer_cairo_CairoGraphics.bounds.y;
-				var useTransform = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 16) > 0;
-				var useRGB = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 4) > 0;
-				var useAlpha = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 8) > 0;
-				var useRect = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 32) > 0;
-				var useOrigin = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 64) > 0;
-				var useBlendAdd = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 65536) > 0;
-				var useBlendOverlay = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 4194304) > 0;
+				var useTransform = (c15.buffer.i[c15.iPos] & 16) > 0;
+				var useRGB = (c15.buffer.i[c15.iPos] & 4) > 0;
+				var useAlpha = (c15.buffer.i[c15.iPos] & 8) > 0;
+				var useRect = (c15.buffer.i[c15.iPos] & 32) > 0;
+				var useOrigin = (c15.buffer.i[c15.iPos] & 64) > 0;
+				var useBlendAdd = (c15.buffer.i[c15.iPos] & 65536) > 0;
+				var useBlendOverlay = (c15.buffer.i[c15.iPos] & 4194304) > 0;
 				if(useTransform) {
 					useScale = false;
 					useRotation = false;
@@ -57805,48 +57723,48 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 					alphaIndex = numValues;
 					numValues++;
 				}
-				var totalCount = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15).length;
-				if(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15) >= 0 && totalCount > openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15)) totalCount = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15);
+				var totalCount = c15.buffer.ff[c15.ffPos].length;
+				if(c15.buffer.i[c15.iPos + 1] >= 0 && totalCount > c15.buffer.i[c15.iPos + 1]) totalCount = c15.buffer.i[c15.iPos + 1];
 				var itemCount = totalCount / numValues | 0;
 				var index = 0;
 				var rect = null;
 				var center = null;
 				var previousTileID = -1;
 				var surface;
-				openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__bitmap.__sync();
-				surface = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__bitmap.getSurface();
+				c15.buffer.ts[c15.tsPos].__bitmap.__sync();
+				surface = c15.buffer.ts[c15.tsPos].__bitmap.getSurface();
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.save();
 				if(useBlendAdd) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_operator(12);
 				if(useBlendOverlay) openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_operator(16);
 				while(index < totalCount) {
-					var i2 = Std["int"](openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 2]);
+					var i2 = c15.buffer.ff[c15.ffPos][index + 2] | 0;
 					var tileID;
 					if(!useRect) tileID = i2; else tileID = -1;
 					if(!useRect && tileID != previousTileID) {
-						rect = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__tileRects[tileID];
-						center = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__centerPoints[tileID];
+						rect = c15.buffer.ts[c15.tsPos].__tileRects[tileID];
+						center = c15.buffer.ts[c15.tsPos].__centerPoints[tileID];
 						previousTileID = tileID;
 					} else if(useRect) {
-						rect = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__rectTile;
-						rect.setTo(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 2],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 3],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 4],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 5]);
-						center = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__point;
-						if(useOrigin) center.setTo(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 6],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 7]); else center.setTo(0,0);
+						rect = c15.buffer.ts[c15.tsPos].__rectTile;
+						rect.setTo(c15.buffer.ff[c15.ffPos][index + 2],c15.buffer.ff[c15.ffPos][index + 3],c15.buffer.ff[c15.ffPos][index + 4],c15.buffer.ff[c15.ffPos][index + 5]);
+						center = c15.buffer.ts[c15.tsPos].__point;
+						if(useOrigin) center.setTo(c15.buffer.ff[c15.ffPos][index + 6],c15.buffer.ff[c15.ffPos][index + 7]); else center.setTo(0,0);
 					}
 					if(rect != null && rect.width > 0 && rect.height > 0 && center != null) {
 						openfl__$internal_renderer_cairo_CairoGraphics.cairo.identityMatrix();
 						if(useTransform) {
-							var matrix1 = new lime_math_Matrix3(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 1],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 2],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 3],0,0);
+							var matrix1 = new lime_math_Matrix3(c15.buffer.ff[c15.ffPos][index + transformIndex],c15.buffer.ff[c15.ffPos][index + transformIndex + 1],c15.buffer.ff[c15.ffPos][index + transformIndex + 2],c15.buffer.ff[c15.ffPos][index + transformIndex + 3],0,0);
 							openfl__$internal_renderer_cairo_CairoGraphics.cairo.set_matrix(matrix1);
 						}
-						openfl__$internal_renderer_cairo_CairoGraphics.cairo.translate(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index] - offsetX1,openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 1] - offsetY1);
-						if(useRotation) openfl__$internal_renderer_cairo_CairoGraphics.cairo.rotate(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + rotationIndex]);
+						openfl__$internal_renderer_cairo_CairoGraphics.cairo.translate(c15.buffer.ff[c15.ffPos][index] - offsetX1,c15.buffer.ff[c15.ffPos][index + 1] - offsetY1);
+						if(useRotation) openfl__$internal_renderer_cairo_CairoGraphics.cairo.rotate(c15.buffer.ff[c15.ffPos][index + rotationIndex]);
 						if(useScale) {
-							var scale = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + scaleIndex];
+							var scale = c15.buffer.ff[c15.ffPos][index + scaleIndex];
 							openfl__$internal_renderer_cairo_CairoGraphics.cairo.scale(scale,scale);
 						}
 						openfl__$internal_renderer_cairo_CairoGraphics.cairo.setSourceSurface(surface,0,0);
 						if(useAlpha) {
-							if(!openfl__$internal_renderer_cairo_CairoGraphics.hitTesting) openfl__$internal_renderer_cairo_CairoGraphics.cairo.paintWithAlpha(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + alphaIndex]);
+							if(!openfl__$internal_renderer_cairo_CairoGraphics.hitTesting) openfl__$internal_renderer_cairo_CairoGraphics.cairo.paintWithAlpha(c15.buffer.ff[c15.ffPos][index + alphaIndex]);
 						} else if(!openfl__$internal_renderer_cairo_CairoGraphics.hitTesting) openfl__$internal_renderer_cairo_CairoGraphics.cairo.paint();
 					}
 					index += numValues;
@@ -57855,7 +57773,8 @@ openfl__$internal_renderer_cairo_CairoGraphics.playCommands = function(commands,
 				openfl__$internal_renderer_cairo_CairoGraphics.cairo.restore();
 				break;
 			default:
-				data.skip(type);
+				data.advance();
+				data.prev = type;
 			}
 		}
 	} catch( e ) { if( e != "__break__" ) throw e; }
@@ -57914,27 +57833,39 @@ openfl__$internal_renderer_cairo_CairoGraphics.renderMask = function(graphics,re
 			++_g;
 			switch(type[1]) {
 			case 3:
-				var c = data.readCubicCurveTo();
-				cairo.curveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c) - offsetY);
-				positionX = openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c);
-				positionY = openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c);
+				var c;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
+				c = data;
+				cairo.curveTo(c.buffer.f[c.fPos] - offsetX,c.buffer.f[c.fPos + 1] - offsetY,c.buffer.f[c.fPos + 2] - offsetX,c.buffer.f[c.fPos + 3] - offsetY,c.buffer.f[c.fPos + 4] - offsetX,c.buffer.f[c.fPos + 5] - offsetY);
+				positionX = c.buffer.f[c.fPos + 4];
+				positionY = c.buffer.f[c.fPos + 4];
 				break;
 			case 4:
-				var c1 = data.readCurveTo();
-				openfl__$internal_renderer_cairo_CairoGraphics.quadraticCurveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1) - offsetY);
-				positionX = openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1);
-				positionY = openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1);
+				var c1;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
+				c1 = data;
+				openfl__$internal_renderer_cairo_CairoGraphics.quadraticCurveTo(c1.buffer.f[c1.fPos] - offsetX,c1.buffer.f[c1.fPos + 1] - offsetY,c1.buffer.f[c1.fPos + 2] - offsetX,c1.buffer.f[c1.fPos + 3] - offsetY);
+				positionX = c1.buffer.f[c1.fPos + 2];
+				positionY = c1.buffer.f[c1.fPos + 3];
 				break;
 			case 5:
-				var c2 = data.readDrawCircle();
-				cairo.arc(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),0,Math.PI * 2);
+				var c2;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
+				c2 = data;
+				cairo.arc(c2.buffer.f[c2.fPos] - offsetX,c2.buffer.f[c2.fPos + 1] - offsetY,c2.buffer.f[c2.fPos + 2],0,Math.PI * 2);
 				break;
 			case 6:
-				var c3 = data.readDrawEllipse();
-				var x = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c3);
-				var y = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c3);
-				var width = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c3);
-				var height = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c3);
+				var c3;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
+				c3 = data;
+				var x = c3.buffer.f[c3.fPos];
+				var y = c3.buffer.f[c3.fPos + 1];
+				var width = c3.buffer.f[c3.fPos + 2];
+				var height = c3.buffer.f[c3.fPos + 3];
 				x -= offsetX;
 				y -= offsetY;
 				var kappa = .5522848;
@@ -57951,27 +57882,40 @@ openfl__$internal_renderer_cairo_CairoGraphics.renderMask = function(graphics,re
 				cairo.curveTo(xm - ox,ye,x,ym + oy,x,ym);
 				break;
 			case 8:
-				var c4 = data.readDrawRect();
-				cairo.rectangle(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c4) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c4) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c4),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c4));
+				var c4;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
+				c4 = data;
+				cairo.rectangle(c4.buffer.f[c4.fPos] - offsetX,c4.buffer.f[c4.fPos + 1] - offsetY,c4.buffer.f[c4.fPos + 2],c4.buffer.f[c4.fPos + 3]);
 				break;
 			case 9:
-				var c5 = data.readDrawRoundRect();
-				openfl__$internal_renderer_cairo_CairoGraphics.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c5) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c5) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c5));
+				var c5;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
+				c5 = data;
+				openfl__$internal_renderer_cairo_CairoGraphics.drawRoundRect(c5.buffer.f[c5.fPos] - offsetX,c5.buffer.f[c5.fPos + 1] - offsetY,c5.buffer.f[c5.fPos + 2],c5.buffer.f[c5.fPos + 3],c5.buffer.f[c5.fPos + 4],c5.buffer.o[c5.oPos]);
 				break;
 			case 16:
-				var c6 = data.readLineTo();
-				cairo.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6) - offsetX,openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6) - offsetY);
-				positionX = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6);
-				positionY = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6);
+				var c6;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
+				c6 = data;
+				cairo.lineTo(c6.buffer.f[c6.fPos] - offsetX,c6.buffer.f[c6.fPos + 1] - offsetY);
+				positionX = c6.buffer.f[c6.fPos];
+				positionY = c6.buffer.f[c6.fPos + 1];
 				break;
 			case 17:
-				var c7 = data.readMoveTo();
-				cairo.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7) - offsetX,openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7) - offsetY);
-				positionX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7);
-				positionY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7);
+				var c7;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
+				c7 = data;
+				cairo.moveTo(c7.buffer.f[c7.fPos] - offsetX,c7.buffer.f[c7.fPos + 1] - offsetY);
+				positionX = c7.buffer.f[c7.fPos];
+				positionY = c7.buffer.f[c7.fPos + 1];
 				break;
 			default:
-				data.skip(type);
+				data.advance();
+				data.prev = type;
 			}
 		}
 		data.destroy();
@@ -58207,39 +58151,62 @@ openfl__$internal_renderer_canvas_CanvasGraphics.hitTest = function(graphics,x,y
 			++_g;
 			switch(type[1]) {
 			case 3:
-				var c = data.readCubicCurveTo();
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c));
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c));
+				var c;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
+				c = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.cubicCurveTo(c.buffer.f[c.fPos],c.buffer.f[c.fPos + 1],c.buffer.f[c.fPos + 2],c.buffer.f[c.fPos + 3],c.buffer.f[c.fPos + 4],c.buffer.f[c.fPos + 5]);
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.cubicCurveTo(c.buffer.f[c.fPos],c.buffer.f[c.fPos + 1],c.buffer.f[c.fPos + 2],c.buffer.f[c.fPos + 3],c.buffer.f[c.fPos + 4],c.buffer.f[c.fPos + 5]);
 				break;
 			case 4:
-				var c1 = data.readCurveTo();
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1));
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1));
+				var c1;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
+				c1 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.curveTo(c1.buffer.f[c1.fPos],c1.buffer.f[c1.fPos + 1],c1.buffer.f[c1.fPos + 2],c1.buffer.f[c1.fPos + 3]);
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.curveTo(c1.buffer.f[c1.fPos],c1.buffer.f[c1.fPos + 1],c1.buffer.f[c1.fPos + 2],c1.buffer.f[c1.fPos + 3]);
 				break;
 			case 16:
-				var c2 = data.readLineTo();
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c2),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c2));
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c2),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c2));
+				var c2;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
+				c2 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.lineTo(c2.buffer.f[c2.fPos],c2.buffer.f[c2.fPos + 1]);
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineTo(c2.buffer.f[c2.fPos],c2.buffer.f[c2.fPos + 1]);
 				break;
 			case 17:
-				var c3 = data.readMoveTo();
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c3),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c3));
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c3),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c3));
+				var c3;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
+				c3 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.moveTo(c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1]);
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.moveTo(c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1]);
 				break;
 			case 14:
-				var c4 = data.readLineGradientStyle();
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineGradientStyle(openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod(c4),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio(c4));
+				var c4;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
+				c4 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineGradientStyle(c4.buffer.o[c4.oPos],c4.buffer.ii[c4.iiPos],c4.buffer.ff[c4.ffPos],c4.buffer.ii[c4.iiPos + 1],c4.buffer.o[c4.oPos + 1],c4.buffer.o[c4.oPos + 2],c4.buffer.o[c4.oPos + 3],c4.buffer.f[c4.fPos]);
 				break;
 			case 13:
-				var c5 = data.readLineBitmapStyle();
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineBitmapStyle(openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap(c5),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_matrix(c5),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat(c5),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_smooth(c5));
+				var c5;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
+				c5 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineBitmapStyle(c5.buffer.o[c5.oPos],c5.buffer.o[c5.oPos + 1],c5.buffer.b[c5.bPos],c5.buffer.b[c5.bPos + 1]);
 				break;
 			case 15:
-				var c6 = data.readLineStyle();
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineStyle(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c6),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c6),1,openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_pixelHinting(c6),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_scaleMode(c6),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c6),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c6),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c6));
+				var c6;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
+				c6 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineStyle(c6.buffer.o[c6.oPos],c6.buffer.i[c6.iPos],1,c6.buffer.b[c6.bPos],c6.buffer.o[c6.oPos + 1],c6.buffer.o[c6.oPos + 2],c6.buffer.o[c6.oPos + 3],c6.buffer.f[c6.fPos + 1]);
 				break;
 			case 12:
-				data.readEndFill();
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.END_FILL;
+				data;
 				openfl__$internal_renderer_canvas_CanvasGraphics.endFill();
 				openfl__$internal_renderer_canvas_CanvasGraphics.endStroke();
 				if(openfl__$internal_renderer_canvas_CanvasGraphics.hasFill && openfl__$internal_renderer_canvas_CanvasGraphics.context.isPointInPath(x,y)) {
@@ -58265,41 +58232,63 @@ openfl__$internal_renderer_canvas_CanvasGraphics.hitTest = function(graphics,x,y
 					return true;
 				}
 				if(type == openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL) {
-					var c7 = data.readBeginBitmapFill();
-					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c7));
-					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c7));
+					var c7;
+					data.advance();
+					data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
+					c7 = data;
+					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginBitmapFill(c7.buffer.o[c7.oPos],c7.buffer.o[c7.oPos + 1],c7.buffer.b[c7.bPos],c7.buffer.b[c7.bPos + 1]);
+					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginBitmapFill(c7.buffer.o[c7.oPos],c7.buffer.o[c7.oPos + 1],c7.buffer.b[c7.bPos],c7.buffer.b[c7.bPos + 1]);
 				} else if(type == openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL) {
-					var c8 = data.readBeginGradientFill();
-					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginGradientFill(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c8));
-					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginGradientFill(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c8));
+					var c8;
+					data.advance();
+					data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
+					c8 = data;
+					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginGradientFill(c8.buffer.o[c8.oPos],c8.buffer.ii[c8.iiPos],c8.buffer.ff[c8.ffPos],c8.buffer.ii[c8.iiPos + 1],c8.buffer.o[c8.oPos + 1],c8.buffer.o[c8.oPos + 2],c8.buffer.o[c8.oPos + 3],c8.buffer.f[c8.fPos]);
+					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginGradientFill(c8.buffer.o[c8.oPos],c8.buffer.ii[c8.iiPos],c8.buffer.ff[c8.ffPos],c8.buffer.ii[c8.iiPos + 1],c8.buffer.o[c8.oPos + 1],c8.buffer.o[c8.oPos + 2],c8.buffer.o[c8.oPos + 3],c8.buffer.f[c8.fPos]);
 				} else {
-					var c9 = data.readBeginFill();
-					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginFill(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c9),1);
-					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginFill(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c9),1);
+					var c9;
+					data.advance();
+					data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
+					c9 = data;
+					openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginFill(c9.buffer.i[c9.iPos],1);
+					openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginFill(c9.buffer.i[c9.iPos],1);
 				}
 				break;
 			case 5:
-				var c10 = data.readDrawCircle();
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawCircle(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c10));
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawCircle(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c10));
+				var c10;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
+				c10 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawCircle(c10.buffer.f[c10.fPos],c10.buffer.f[c10.fPos + 1],c10.buffer.f[c10.fPos + 2]);
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawCircle(c10.buffer.f[c10.fPos],c10.buffer.f[c10.fPos + 1],c10.buffer.f[c10.fPos + 2]);
 				break;
 			case 6:
-				var c11 = data.readDrawEllipse();
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawEllipse(openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c11));
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawEllipse(openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c11));
+				var c11;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
+				c11 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawEllipse(c11.buffer.f[c11.fPos],c11.buffer.f[c11.fPos + 1],c11.buffer.f[c11.fPos + 2],c11.buffer.f[c11.fPos + 3]);
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawEllipse(c11.buffer.f[c11.fPos],c11.buffer.f[c11.fPos + 1],c11.buffer.f[c11.fPos + 2],c11.buffer.f[c11.fPos + 3]);
 				break;
 			case 8:
-				var c12 = data.readDrawRect();
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c12));
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c12));
+				var c12;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
+				c12 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRect(c12.buffer.f[c12.fPos],c12.buffer.f[c12.fPos + 1],c12.buffer.f[c12.fPos + 2],c12.buffer.f[c12.fPos + 3]);
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRect(c12.buffer.f[c12.fPos],c12.buffer.f[c12.fPos + 1],c12.buffer.f[c12.fPos + 2],c12.buffer.f[c12.fPos + 3]);
 				break;
 			case 9:
-				var c13 = data.readDrawRoundRect();
-				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c13));
-				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c13));
+				var c13;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
+				c13 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRoundRect(c13.buffer.f[c13.fPos],c13.buffer.f[c13.fPos + 1],c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3],c13.buffer.f[c13.fPos + 4],c13.buffer.o[c13.oPos]);
+				openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRoundRect(c13.buffer.f[c13.fPos],c13.buffer.f[c13.fPos + 1],c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3],c13.buffer.f[c13.fPos + 4],c13.buffer.o[c13.oPos]);
 				break;
 			default:
-				data.skip(type);
+				data.advance();
+				data.prev = type;
 			}
 		}
 		if(openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.get_length() > 0) openfl__$internal_renderer_canvas_CanvasGraphics.endFill();
@@ -58374,24 +58363,36 @@ openfl__$internal_renderer_canvas_CanvasGraphics.playCommands = function(command
 		++_g;
 		switch(type[1]) {
 		case 3:
-			var c = data.readCubicCurveTo();
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c) - offsetY);
+			var c;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
+			c = data;
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(c.buffer.f[c.fPos] - offsetX,c.buffer.f[c.fPos + 1] - offsetY,c.buffer.f[c.fPos + 2] - offsetX,c.buffer.f[c.fPos + 3] - offsetY,c.buffer.f[c.fPos + 4] - offsetX,c.buffer.f[c.fPos + 5] - offsetY);
 			break;
 		case 4:
-			var c1 = data.readCurveTo();
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.quadraticCurveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1) - offsetY);
+			var c1;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
+			c1 = data;
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.quadraticCurveTo(c1.buffer.f[c1.fPos] - offsetX,c1.buffer.f[c1.fPos + 1] - offsetY,c1.buffer.f[c1.fPos + 2] - offsetX,c1.buffer.f[c1.fPos + 3] - offsetY);
 			break;
 		case 5:
-			var c2 = data.readDrawCircle();
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX + openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY);
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.arc(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),0,Math.PI * 2,true);
+			var c2;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
+			c2 = data;
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(c2.buffer.f[c2.fPos] - offsetX + c2.buffer.f[c2.fPos + 2],c2.buffer.f[c2.fPos + 1] - offsetY);
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.arc(c2.buffer.f[c2.fPos] - offsetX,c2.buffer.f[c2.fPos + 1] - offsetY,c2.buffer.f[c2.fPos + 2],0,Math.PI * 2,true);
 			break;
 		case 6:
-			var c3 = data.readDrawEllipse();
-			var x = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c3);
-			var y = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c3);
-			var width = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c3);
-			var height = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c3);
+			var c3;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
+			c3 = data;
+			var x = c3.buffer.f[c3.fPos];
+			var y = c3.buffer.f[c3.fPos + 1];
+			var width = c3.buffer.f[c3.fPos + 2];
+			var height = c3.buffer.f[c3.fPos + 3];
 			x -= offsetX;
 			y -= offsetY;
 			var kappa = .5522848;
@@ -58408,76 +58409,97 @@ openfl__$internal_renderer_canvas_CanvasGraphics.playCommands = function(command
 			openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(xm - ox,ye,x,ym + oy,x,ym);
 			break;
 		case 9:
-			var c4 = data.readDrawRoundRect();
-			openfl__$internal_renderer_canvas_CanvasGraphics.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c4) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c4) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c4),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c4),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c4),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c4));
+			var c4;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
+			c4 = data;
+			openfl__$internal_renderer_canvas_CanvasGraphics.drawRoundRect(c4.buffer.f[c4.fPos] - offsetX,c4.buffer.f[c4.fPos + 1] - offsetY,c4.buffer.f[c4.fPos + 2],c4.buffer.f[c4.fPos + 3],c4.buffer.f[c4.fPos + 4],c4.buffer.o[c4.oPos]);
 			break;
 		case 16:
-			var c5 = data.readLineTo();
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c5) - offsetX,openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c5) - offsetY);
-			positionX = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c5);
-			positionY = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c5);
+			var c5;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
+			c5 = data;
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.lineTo(c5.buffer.f[c5.fPos] - offsetX,c5.buffer.f[c5.fPos + 1] - offsetY);
+			positionX = c5.buffer.f[c5.fPos];
+			positionY = c5.buffer.f[c5.fPos + 1];
 			break;
 		case 17:
-			var c6 = data.readMoveTo();
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c6) - offsetX,openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c6) - offsetY);
-			positionX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c6);
-			positionY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c6);
+			var c6;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
+			c6 = data;
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(c6.buffer.f[c6.fPos] - offsetX,c6.buffer.f[c6.fPos + 1] - offsetY);
+			positionX = c6.buffer.f[c6.fPos];
+			positionY = c6.buffer.f[c6.fPos + 1];
 			closeGap = true;
-			startX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c6);
-			startY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c6);
+			startX = c6.buffer.f[c6.fPos];
+			startY = c6.buffer.f[c6.fPos + 1];
 			break;
 		case 15:
-			var c7 = data.readLineStyle();
+			var c7;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
+			c7 = data;
 			if(stroke && openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke) {
 				openfl__$internal_renderer_canvas_CanvasGraphics.context.closePath();
 				if(!openfl__$internal_renderer_canvas_CanvasGraphics.hitTesting) openfl__$internal_renderer_canvas_CanvasGraphics.context.stroke();
 				openfl__$internal_renderer_canvas_CanvasGraphics.context.beginPath();
 			}
 			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(positionX - offsetX,positionY - offsetY);
-			if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c7) == null) openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke = false; else {
-				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c7) > 0) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineWidth = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c7); else openfl__$internal_renderer_canvas_CanvasGraphics.context.lineWidth = 1;
-				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c7) == null) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineJoin = "round"; else openfl__$internal_renderer_canvas_CanvasGraphics.context.lineJoin = openfl_display__$JointStyle_JointStyle_$Impl_$.toString(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c7)).toLowerCase();
-				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c7) == null) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineCap = "round"; else {
-					var _g2 = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c7);
+			if(c7.buffer.o[c7.oPos] == null) openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke = false; else {
+				if(c7.buffer.o[c7.oPos] > 0) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineWidth = c7.buffer.o[c7.oPos]; else openfl__$internal_renderer_canvas_CanvasGraphics.context.lineWidth = 1;
+				if(c7.buffer.o[c7.oPos + 3] == null) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineJoin = "round"; else openfl__$internal_renderer_canvas_CanvasGraphics.context.lineJoin = openfl_display__$JointStyle_JointStyle_$Impl_$.toString(c7.buffer.o[c7.oPos + 3]).toLowerCase();
+				if(c7.buffer.o[c7.oPos + 2] == null) openfl__$internal_renderer_canvas_CanvasGraphics.context.lineCap = "round"; else {
+					var _g2 = c7.buffer.o[c7.oPos + 2];
 					switch(_g2) {
 					case 0:
 						openfl__$internal_renderer_canvas_CanvasGraphics.context.lineCap = "butt";
 						break;
 					default:
-						openfl__$internal_renderer_canvas_CanvasGraphics.context.lineCap = openfl_display__$CapsStyle_CapsStyle_$Impl_$.toString(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c7)).toLowerCase();
+						openfl__$internal_renderer_canvas_CanvasGraphics.context.lineCap = openfl_display__$CapsStyle_CapsStyle_$Impl_$.toString(c7.buffer.o[c7.oPos + 2]).toLowerCase();
 					}
 				}
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.miterLimit = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c7);
-				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c7) == 1) openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = "#" + StringTools.hex(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c7) & 16777215,6); else {
-					var r = (openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c7) & 16711680) >>> 16;
-					var g = (openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c7) & 65280) >>> 8;
-					var b = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c7) & 255;
-					openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = "rgba(" + r + ", " + g + ", " + b + ", " + openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c7) + ")";
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.miterLimit = c7.buffer.f[c7.fPos + 1];
+				if(c7.buffer.f[c7.fPos] == 1) openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = "#" + StringTools.hex(c7.buffer.i[c7.iPos] & 16777215,6); else {
+					var r = (c7.buffer.i[c7.iPos] & 16711680) >>> 16;
+					var g = (c7.buffer.i[c7.iPos] & 65280) >>> 8;
+					var b = c7.buffer.i[c7.iPos] & 255;
+					openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = "rgba(" + r + ", " + g + ", " + b + ", " + c7.buffer.f[c7.fPos] + ")";
 				}
 				openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke = true;
 			}
 			break;
 		case 14:
-			var c8 = data.readLineGradientStyle();
+			var c8;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
+			c8 = data;
 			if(stroke && openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke) openfl__$internal_renderer_canvas_CanvasGraphics.closePath();
 			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(positionX - offsetX,positionY - offsetY);
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createGradientPattern(openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod(c8),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio(c8));
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createGradientPattern(c8.buffer.o[c8.oPos],c8.buffer.ii[c8.iiPos],c8.buffer.ff[c8.ffPos],c8.buffer.ii[c8.iiPos + 1],c8.buffer.o[c8.oPos + 1],c8.buffer.o[c8.oPos + 2],c8.buffer.o[c8.oPos + 3],c8.buffer.f[c8.fPos]);
 			openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke = true;
 			break;
 		case 13:
-			var c9 = data.readLineBitmapStyle();
+			var c9;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
+			c9 = data;
 			if(stroke && openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke) openfl__$internal_renderer_canvas_CanvasGraphics.closePath();
 			openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(positionX - offsetX,positionY - offsetY);
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createBitmapFill(openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap(c9),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat(c9));
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.strokeStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createBitmapFill(c9.buffer.o[c9.oPos],c9.buffer.b[c9.bPos]);
 			openfl__$internal_renderer_canvas_CanvasGraphics.hasStroke = true;
 			break;
 		case 0:
-			var c10 = data.readBeginBitmapFill();
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c10),true);
+			var c10;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
+			c10 = data;
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createBitmapFill(c10.buffer.o[c10.oPos],true);
 			openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = true;
-			if(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c10) != null) {
-				openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix = openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c10);
-				openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix = openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c10).clone();
+			if(c10.buffer.o[c10.oPos + 1] != null) {
+				openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix = c10.buffer.o[c10.oPos + 1];
+				openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix = c10.buffer.o[c10.oPos + 1].clone();
 				openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix.invert();
 			} else {
 				openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix = null;
@@ -58485,26 +58507,35 @@ openfl__$internal_renderer_canvas_CanvasGraphics.playCommands = function(command
 			}
 			break;
 		case 1:
-			var c11 = data.readBeginFill();
-			if(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c11) < 0.005) openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = false; else {
-				if(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c11) == 1) openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = "#" + StringTools.hex(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c11),6); else {
-					var r1 = (openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c11) & 16711680) >>> 16;
-					var g1 = (openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c11) & 65280) >>> 8;
-					var b1 = openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c11) & 255;
-					openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = "rgba(" + r1 + ", " + g1 + ", " + b1 + ", " + openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c11) + ")";
+			var c11;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
+			c11 = data;
+			if(c11.buffer.f[c11.fPos] < 0.005) openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = false; else {
+				if(c11.buffer.f[c11.fPos] == 1) openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = "#" + StringTools.hex(c11.buffer.i[c11.iPos],6); else {
+					var r1 = (c11.buffer.i[c11.iPos] & 16711680) >>> 16;
+					var g1 = (c11.buffer.i[c11.iPos] & 65280) >>> 8;
+					var b1 = c11.buffer.i[c11.iPos] & 255;
+					openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = "rgba(" + r1 + ", " + g1 + ", " + b1 + ", " + c11.buffer.f[c11.fPos] + ")";
 				}
 				openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill = null;
 				openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = true;
 			}
 			break;
 		case 2:
-			var c12 = data.readBeginGradientFill();
-			openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createGradientPattern(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c12),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c12));
+			var c12;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
+			c12 = data;
+			openfl__$internal_renderer_canvas_CanvasGraphics.context.fillStyle = openfl__$internal_renderer_canvas_CanvasGraphics.createGradientPattern(c12.buffer.o[c12.oPos],c12.buffer.ii[c12.iiPos],c12.buffer.ff[c12.ffPos],c12.buffer.ii[c12.iiPos + 1],c12.buffer.o[c12.oPos + 1],c12.buffer.o[c12.oPos + 2],c12.buffer.o[c12.oPos + 3],c12.buffer.f[c12.fPos]);
 			openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill = null;
 			openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = true;
 			break;
 		case 8:
-			var c13 = data.readDrawRect();
+			var c13;
+			data.advance();
+			data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
+			c13 = data;
 			var optimizationUsed = false;
 			if(openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill != null) {
 				var st = 0;
@@ -58514,28 +58545,29 @@ openfl__$internal_renderer_canvas_CanvasGraphics.playCommands = function(command
 				var canOptimizeMatrix = true;
 				if(openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix != null) {
 					if(openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix.b != 0 || openfl__$internal_renderer_canvas_CanvasGraphics.pendingMatrix.c != 0) canOptimizeMatrix = false; else {
-						var stl = openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix.transformPoint(new openfl_geom_Point(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13)));
-						var sbr = openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix.transformPoint(new openfl_geom_Point(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13) + openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13) + openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c13)));
+						var stl = openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix.transformPoint(new openfl_geom_Point(c13.buffer.f[c13.fPos],c13.buffer.f[c13.fPos + 1]));
+						var sbr = openfl__$internal_renderer_canvas_CanvasGraphics.inversePendingMatrix.transformPoint(new openfl_geom_Point(c13.buffer.f[c13.fPos] + c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 1] + c13.buffer.f[c13.fPos + 3]));
 						st = stl.y;
 						sl = stl.x;
 						sb = sbr.y;
 						sr = sbr.x;
 					}
 				} else {
-					st = openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13);
-					sl = openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13);
-					sb = openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13) + openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c13);
-					sr = openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13) + openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c13);
+					st = c13.buffer.f[c13.fPos + 1];
+					sl = c13.buffer.f[c13.fPos];
+					sb = c13.buffer.f[c13.fPos + 1] + c13.buffer.f[c13.fPos + 3];
+					sr = c13.buffer.f[c13.fPos] + c13.buffer.f[c13.fPos + 2];
 				}
 				if(canOptimizeMatrix && st >= 0 && sl >= 0 && sr <= openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill.width && sb <= openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill.height) {
 					optimizationUsed = true;
-					if(!openfl__$internal_renderer_canvas_CanvasGraphics.hitTesting) openfl__$internal_renderer_canvas_CanvasGraphics.context.drawImage(openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill.image.get_src(),sl,st,sr - sl,sb - st,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c13));
+					if(!openfl__$internal_renderer_canvas_CanvasGraphics.hitTesting) openfl__$internal_renderer_canvas_CanvasGraphics.context.drawImage(openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill.image.get_src(),sl,st,sr - sl,sb - st,c13.buffer.f[c13.fPos] - offsetX,c13.buffer.f[c13.fPos + 1] - offsetY,c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3]);
 				}
 			}
-			if(!optimizationUsed) openfl__$internal_renderer_canvas_CanvasGraphics.context.rect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c13) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c13) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c13));
+			if(!optimizationUsed) openfl__$internal_renderer_canvas_CanvasGraphics.context.rect(c13.buffer.f[c13.fPos] - offsetX,c13.buffer.f[c13.fPos + 1] - offsetY,c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3]);
 			break;
 		default:
-			data.skip(type);
+			data.advance();
+			data.prev = type;
 		}
 	}
 	data.destroy();
@@ -58594,88 +58626,135 @@ openfl__$internal_renderer_canvas_CanvasGraphics.render = function(graphics,rend
 					++_g;
 					switch(type[1]) {
 					case 3:
-						var c = data.readCubicCurveTo();
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c));
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c));
+						var c;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
+						c = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.cubicCurveTo(c.buffer.f[c.fPos],c.buffer.f[c.fPos + 1],c.buffer.f[c.fPos + 2],c.buffer.f[c.fPos + 3],c.buffer.f[c.fPos + 4],c.buffer.f[c.fPos + 5]);
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.cubicCurveTo(c.buffer.f[c.fPos],c.buffer.f[c.fPos + 1],c.buffer.f[c.fPos + 2],c.buffer.f[c.fPos + 3],c.buffer.f[c.fPos + 4],c.buffer.f[c.fPos + 5]);
 						break;
 					case 4:
-						var c1 = data.readCurveTo();
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1));
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1));
+						var c1;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
+						c1 = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.curveTo(c1.buffer.f[c1.fPos],c1.buffer.f[c1.fPos + 1],c1.buffer.f[c1.fPos + 2],c1.buffer.f[c1.fPos + 3]);
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.curveTo(c1.buffer.f[c1.fPos],c1.buffer.f[c1.fPos + 1],c1.buffer.f[c1.fPos + 2],c1.buffer.f[c1.fPos + 3]);
 						break;
 					case 16:
-						var c2 = data.readLineTo();
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c2),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c2));
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c2),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c2));
+						var c2;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
+						c2 = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.lineTo(c2.buffer.f[c2.fPos],c2.buffer.f[c2.fPos + 1]);
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineTo(c2.buffer.f[c2.fPos],c2.buffer.f[c2.fPos + 1]);
 						break;
 					case 17:
-						var c3 = data.readMoveTo();
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c3),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c3));
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c3),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c3));
+						var c3;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
+						c3 = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.moveTo(c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1]);
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.moveTo(c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1]);
 						break;
 					case 12:
-						data.readEndFill();
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.END_FILL;
+						data;
 						openfl__$internal_renderer_canvas_CanvasGraphics.endFill();
 						openfl__$internal_renderer_canvas_CanvasGraphics.endStroke();
 						openfl__$internal_renderer_canvas_CanvasGraphics.hasFill = false;
 						openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill = null;
 						break;
 					case 15:
-						var c4 = data.readLineStyle();
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineStyle(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_pixelHinting(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_scaleMode(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c4),openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c4));
+						var c4;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
+						c4 = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineStyle(c4.buffer.o[c4.oPos],c4.buffer.i[c4.iPos],c4.buffer.f[c4.fPos],c4.buffer.b[c4.bPos],c4.buffer.o[c4.oPos + 1],c4.buffer.o[c4.oPos + 2],c4.buffer.o[c4.oPos + 3],c4.buffer.f[c4.fPos + 1]);
 						break;
 					case 14:
-						var c5 = data.readLineGradientStyle();
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineGradientStyle(openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_type(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_colors(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_alphas(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_ratios(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_matrix(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_spreadMethod(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_interpolationMethod(c5),openfl__$internal_renderer__$DrawCommandReader_LineGradientStyleView_$Impl_$.get_focalPointRatio(c5));
+						var c5;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.LINE_GRADIENT_STYLE;
+						c5 = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineGradientStyle(c5.buffer.o[c5.oPos],c5.buffer.ii[c5.iiPos],c5.buffer.ff[c5.ffPos],c5.buffer.ii[c5.iiPos + 1],c5.buffer.o[c5.oPos + 1],c5.buffer.o[c5.oPos + 2],c5.buffer.o[c5.oPos + 3],c5.buffer.f[c5.fPos]);
 						break;
 					case 13:
-						var c6 = data.readLineBitmapStyle();
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineBitmapStyle(openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_bitmap(c6),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_matrix(c6),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_repeat(c6),openfl__$internal_renderer__$DrawCommandReader_LineBitmapStyleView_$Impl_$.get_smooth(c6));
+						var c6;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.LINE_BITMAP_STYLE;
+						c6 = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.lineBitmapStyle(c6.buffer.o[c6.oPos],c6.buffer.o[c6.oPos + 1],c6.buffer.b[c6.bPos],c6.buffer.b[c6.bPos + 1]);
 						break;
 					case 0:case 1:case 2:
 						openfl__$internal_renderer_canvas_CanvasGraphics.endFill();
 						openfl__$internal_renderer_canvas_CanvasGraphics.endStroke();
 						if(type == openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL) {
-							var c7 = data.readBeginBitmapFill();
-							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c7));
-							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginBitmapFill(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c7),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c7));
+							var c7;
+							data.advance();
+							data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
+							c7 = data;
+							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginBitmapFill(c7.buffer.o[c7.oPos],c7.buffer.o[c7.oPos + 1],c7.buffer.b[c7.bPos],c7.buffer.b[c7.bPos + 1]);
+							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginBitmapFill(c7.buffer.o[c7.oPos],c7.buffer.o[c7.oPos + 1],c7.buffer.b[c7.bPos],c7.buffer.b[c7.bPos + 1]);
 						} else if(type == openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL) {
-							var c8 = data.readBeginGradientFill();
-							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginGradientFill(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c8));
-							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginGradientFill(openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_type(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_colors(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_alphas(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_ratios(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_matrix(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_spreadMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_interpolationMethod(c8),openfl__$internal_renderer__$DrawCommandReader_BeginGradientFillView_$Impl_$.get_focalPointRatio(c8));
+							var c8;
+							data.advance();
+							data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_GRADIENT_FILL;
+							c8 = data;
+							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginGradientFill(c8.buffer.o[c8.oPos],c8.buffer.ii[c8.iiPos],c8.buffer.ff[c8.ffPos],c8.buffer.ii[c8.iiPos + 1],c8.buffer.o[c8.oPos + 1],c8.buffer.o[c8.oPos + 2],c8.buffer.o[c8.oPos + 3],c8.buffer.f[c8.fPos]);
+							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginGradientFill(c8.buffer.o[c8.oPos],c8.buffer.ii[c8.iiPos],c8.buffer.ff[c8.ffPos],c8.buffer.ii[c8.iiPos + 1],c8.buffer.o[c8.oPos + 1],c8.buffer.o[c8.oPos + 2],c8.buffer.o[c8.oPos + 3],c8.buffer.f[c8.fPos]);
 						} else {
-							var c9 = data.readBeginFill();
-							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginFill(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c9),openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c9));
-							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginFill(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c9),openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c9));
+							var c9;
+							data.advance();
+							data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
+							c9 = data;
+							openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.beginFill(c9.buffer.i[c9.iPos],c9.buffer.f[c9.fPos]);
+							openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.beginFill(c9.buffer.i[c9.iPos],c9.buffer.f[c9.fPos]);
 						}
 						break;
 					case 5:
-						var c10 = data.readDrawCircle();
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawCircle(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c10));
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawCircle(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c10),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c10));
+						var c10;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
+						c10 = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawCircle(c10.buffer.f[c10.fPos],c10.buffer.f[c10.fPos + 1],c10.buffer.f[c10.fPos + 2]);
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawCircle(c10.buffer.f[c10.fPos],c10.buffer.f[c10.fPos + 1],c10.buffer.f[c10.fPos + 2]);
 						break;
 					case 6:
-						var c11 = data.readDrawEllipse();
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawEllipse(openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c11));
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawEllipse(openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c11),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c11));
+						var c11;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
+						c11 = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawEllipse(c11.buffer.f[c11.fPos],c11.buffer.f[c11.fPos + 1],c11.buffer.f[c11.fPos + 2],c11.buffer.f[c11.fPos + 3]);
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawEllipse(c11.buffer.f[c11.fPos],c11.buffer.f[c11.fPos + 1],c11.buffer.f[c11.fPos + 2],c11.buffer.f[c11.fPos + 3]);
 						break;
 					case 8:
-						var c12 = data.readDrawRect();
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c12));
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c12),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c12));
+						var c12;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
+						c12 = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRect(c12.buffer.f[c12.fPos],c12.buffer.f[c12.fPos + 1],c12.buffer.f[c12.fPos + 2],c12.buffer.f[c12.fPos + 3]);
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRect(c12.buffer.f[c12.fPos],c12.buffer.f[c12.fPos + 1],c12.buffer.f[c12.fPos + 2],c12.buffer.f[c12.fPos + 3]);
 						break;
 					case 9:
-						var c13 = data.readDrawRoundRect();
-						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c13));
-						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c13),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c13));
+						var c13;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
+						c13 = data;
+						openfl__$internal_renderer_canvas_CanvasGraphics.fillCommands.drawRoundRect(c13.buffer.f[c13.fPos],c13.buffer.f[c13.fPos + 1],c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3],c13.buffer.f[c13.fPos + 4],c13.buffer.o[c13.oPos]);
+						openfl__$internal_renderer_canvas_CanvasGraphics.strokeCommands.drawRoundRect(c13.buffer.f[c13.fPos],c13.buffer.f[c13.fPos + 1],c13.buffer.f[c13.fPos + 2],c13.buffer.f[c13.fPos + 3],c13.buffer.f[c13.fPos + 4],c13.buffer.o[c13.oPos]);
 						break;
 					case 11:
 						openfl__$internal_renderer_canvas_CanvasGraphics.endFill();
 						openfl__$internal_renderer_canvas_CanvasGraphics.endStroke();
-						var c14 = data.readDrawTriangles();
-						var v = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_vertices(c14);
-						var ind = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_indices(c14);
-						var uvt = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData(c14);
+						var c14;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TRIANGLES;
+						c14 = data;
+						var v = c14.buffer.o[c14.oPos];
+						var ind = c14.buffer.o[c14.oPos + 1];
+						var uvt = c14.buffer.o[c14.oPos + 2];
 						var pattern = null;
 						var colorFill = openfl__$internal_renderer_canvas_CanvasGraphics.bitmapFill == null;
 						if(colorFill && uvt != null) throw "__break__";
@@ -58773,7 +58852,7 @@ openfl__$internal_renderer_canvas_CanvasGraphics.render = function(graphics,rend
 							y2 = v.data[iby];
 							x3 = v.data[icx];
 							y3 = v.data[icy];
-							var _g21 = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_culling(c14);
+							var _g21 = c14.buffer.o[c14.oPos + 3];
 							switch(_g21) {
 							case 2:
 								if(!((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1) < 0)) {
@@ -58830,17 +58909,20 @@ openfl__$internal_renderer_canvas_CanvasGraphics.render = function(graphics,rend
 						}
 						break;
 					case 10:
-						var c15 = data.readDrawTiles();
-						var useScale = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 1) > 0;
+						var c15;
+						data.advance();
+						data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TILES;
+						c15 = data;
+						var useScale = (c15.buffer.i[c15.iPos] & 1) > 0;
 						var offsetX = openfl__$internal_renderer_canvas_CanvasGraphics.bounds.x;
 						var offsetY = openfl__$internal_renderer_canvas_CanvasGraphics.bounds.y;
-						var useRotation = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 2) > 0;
-						var useTransform = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 16) > 0;
-						var useRGB = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 4) > 0;
-						var useAlpha = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 8) > 0;
-						var useRect = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 32) > 0;
-						var useOrigin = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 64) > 0;
-						var useBlendAdd = (openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c15) & 65536) > 0;
+						var useRotation = (c15.buffer.i[c15.iPos] & 2) > 0;
+						var useTransform = (c15.buffer.i[c15.iPos] & 16) > 0;
+						var useRGB = (c15.buffer.i[c15.iPos] & 4) > 0;
+						var useAlpha = (c15.buffer.i[c15.iPos] & 8) > 0;
+						var useRect = (c15.buffer.i[c15.iPos] & 32) > 0;
+						var useOrigin = (c15.buffer.i[c15.iPos] & 64) > 0;
+						var useBlendAdd = (c15.buffer.i[c15.iPos] & 65536) > 0;
 						if(useTransform) {
 							useScale = false;
 							useRotation = false;
@@ -58872,39 +58954,39 @@ openfl__$internal_renderer_canvas_CanvasGraphics.render = function(graphics,rend
 							alphaIndex = numValues;
 							numValues++;
 						}
-						var totalCount = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15).length;
-						if(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15) >= 0 && totalCount > openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15)) totalCount = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c15);
+						var totalCount = c15.buffer.ff[c15.ffPos].length;
+						if(c15.buffer.i[c15.iPos + 1] >= 0 && totalCount > c15.buffer.i[c15.iPos + 1]) totalCount = c15.buffer.i[c15.iPos + 1];
 						var itemCount = totalCount / numValues | 0;
 						var index = 0;
 						var rect = null;
 						var center = null;
 						var previousTileID = -1;
 						var surface;
-						openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__bitmap.__sync();
-						surface = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__bitmap.image.get_src();
+						c15.buffer.ts[c15.tsPos].__bitmap.__sync();
+						surface = c15.buffer.ts[c15.tsPos].__bitmap.image.get_src();
 						if(useBlendAdd) openfl__$internal_renderer_canvas_CanvasGraphics.context.globalCompositeOperation = "lighter";
 						while(index < totalCount) {
 							var tileID;
-							if(!useRect) tileID = Std["int"](openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 2]); else tileID = -1;
+							if(!useRect) tileID = c15.buffer.ff[c15.ffPos][index + 2] | 0; else tileID = -1;
 							if(!useRect && tileID != previousTileID) {
-								rect = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__tileRects[tileID];
-								center = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__centerPoints[tileID];
+								rect = c15.buffer.ts[c15.tsPos].__tileRects[tileID];
+								center = c15.buffer.ts[c15.tsPos].__centerPoints[tileID];
 								previousTileID = tileID;
 							} else if(useRect) {
-								rect = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__rectTile;
-								rect.setTo(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 2],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 3],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 4],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 5]);
-								center = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c15).__point;
-								if(useOrigin) center.setTo(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 6],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 7]); else center.setTo(0,0);
+								rect = c15.buffer.ts[c15.tsPos].__rectTile;
+								rect.setTo(c15.buffer.ff[c15.ffPos][index + 2],c15.buffer.ff[c15.ffPos][index + 3],c15.buffer.ff[c15.ffPos][index + 4],c15.buffer.ff[c15.ffPos][index + 5]);
+								center = c15.buffer.ts[c15.tsPos].__point;
+								if(useOrigin) center.setTo(c15.buffer.ff[c15.ffPos][index + 6],c15.buffer.ff[c15.ffPos][index + 7]); else center.setTo(0,0);
 							}
 							if(rect != null && rect.width > 0 && rect.height > 0 && center != null) {
 								openfl__$internal_renderer_canvas_CanvasGraphics.context.save();
-								openfl__$internal_renderer_canvas_CanvasGraphics.context.translate(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index] - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + 1] - offsetY);
-								if(useRotation) openfl__$internal_renderer_canvas_CanvasGraphics.context.rotate(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + rotationIndex]);
+								openfl__$internal_renderer_canvas_CanvasGraphics.context.translate(c15.buffer.ff[c15.ffPos][index] - offsetX,c15.buffer.ff[c15.ffPos][index + 1] - offsetY);
+								if(useRotation) openfl__$internal_renderer_canvas_CanvasGraphics.context.rotate(c15.buffer.ff[c15.ffPos][index + rotationIndex]);
 								var scale = 1.0;
-								if(useScale) scale = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + scaleIndex];
-								if(useTransform) openfl__$internal_renderer_canvas_CanvasGraphics.context.transform(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 1],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 2],openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + transformIndex + 3],0,0);
-								if(useAlpha) openfl__$internal_renderer_canvas_CanvasGraphics.context.globalAlpha = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c15)[index + alphaIndex];
-								openfl__$internal_renderer_canvas_CanvasGraphics.context.imageSmoothingEnabled = openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_smooth(c15);
+								if(useScale) scale = c15.buffer.ff[c15.ffPos][index + scaleIndex];
+								if(useTransform) openfl__$internal_renderer_canvas_CanvasGraphics.context.transform(c15.buffer.ff[c15.ffPos][index + transformIndex],c15.buffer.ff[c15.ffPos][index + transformIndex + 1],c15.buffer.ff[c15.ffPos][index + transformIndex + 2],c15.buffer.ff[c15.ffPos][index + transformIndex + 3],0,0);
+								if(useAlpha) openfl__$internal_renderer_canvas_CanvasGraphics.context.globalAlpha = c15.buffer.ff[c15.ffPos][index + alphaIndex];
+								openfl__$internal_renderer_canvas_CanvasGraphics.context.imageSmoothingEnabled = c15.buffer.b[c15.bPos];
 								openfl__$internal_renderer_canvas_CanvasGraphics.context.drawImage(surface,rect.x,rect.y,rect.width,rect.height,-center.x * scale,-center.y * scale,rect.width * scale,rect.height * scale);
 								openfl__$internal_renderer_canvas_CanvasGraphics.context.restore();
 							}
@@ -58913,7 +58995,8 @@ openfl__$internal_renderer_canvas_CanvasGraphics.render = function(graphics,rend
 						if(useBlendAdd) openfl__$internal_renderer_canvas_CanvasGraphics.context.globalCompositeOperation = "source-over";
 						break;
 					default:
-						data.skip(type);
+						data.advance();
+						data.prev = type;
 					}
 				}
 			} catch( e ) { if( e != "__break__" ) throw e; }
@@ -58940,27 +59023,39 @@ openfl__$internal_renderer_canvas_CanvasGraphics.renderMask = function(graphics,
 			++_g;
 			switch(type[1]) {
 			case 3:
-				var c = data.readCubicCurveTo();
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c) - offsetY);
-				positionX = openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c);
-				positionY = openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c);
+				var c;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
+				c = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(c.buffer.f[c.fPos] - offsetX,c.buffer.f[c.fPos + 1] - offsetY,c.buffer.f[c.fPos + 2] - offsetX,c.buffer.f[c.fPos + 3] - offsetY,c.buffer.f[c.fPos + 4] - offsetX,c.buffer.f[c.fPos + 5] - offsetY);
+				positionX = c.buffer.f[c.fPos + 4];
+				positionY = c.buffer.f[c.fPos + 5];
 				break;
 			case 4:
-				var c1 = data.readCurveTo();
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.quadraticCurveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c1) - offsetY,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1) - offsetX,openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1) - offsetY);
-				positionX = openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c1);
-				positionY = openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c1);
+				var c1;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
+				c1 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.quadraticCurveTo(c1.buffer.f[c1.fPos] - offsetX,c1.buffer.f[c1.fPos + 1] - offsetY,c1.buffer.f[c1.fPos + 2] - offsetX,c1.buffer.f[c1.fPos + 3] - offsetY);
+				positionX = c1.buffer.f[c1.fPos + 2];
+				positionY = c1.buffer.f[c1.fPos + 3];
 				break;
 			case 5:
-				var c2 = data.readDrawCircle();
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.arc(openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c2) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c2) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c2),0,Math.PI * 2,true);
+				var c2;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
+				c2 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.arc(c2.buffer.f[c2.fPos] - offsetX,c2.buffer.f[c2.fPos + 1] - offsetY,c2.buffer.f[c2.fPos + 2],0,Math.PI * 2,true);
 				break;
 			case 6:
-				var c3 = data.readDrawEllipse();
-				var x = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c3);
-				var y = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c3);
-				var width = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c3);
-				var height = openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c3);
+				var c3;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
+				c3 = data;
+				var x = c3.buffer.f[c3.fPos];
+				var y = c3.buffer.f[c3.fPos + 1];
+				var width = c3.buffer.f[c3.fPos + 2];
+				var height = c3.buffer.f[c3.fPos + 3];
 				x -= offsetX;
 				y -= offsetY;
 				var kappa = .5522848;
@@ -58977,27 +59072,40 @@ openfl__$internal_renderer_canvas_CanvasGraphics.renderMask = function(graphics,
 				openfl__$internal_renderer_canvas_CanvasGraphics.context.bezierCurveTo(xm - ox,ye,x,ym + oy,x,ym);
 				break;
 			case 8:
-				var c4 = data.readDrawRect();
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.rect(openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c4) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c4) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c4),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c4));
+				var c4;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
+				c4 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.rect(c4.buffer.f[c4.fPos] - offsetX,c4.buffer.f[c4.fPos + 1] - offsetY,c4.buffer.f[c4.fPos + 2],c4.buffer.f[c4.fPos + 3]);
 				break;
 			case 9:
-				var c5 = data.readDrawRoundRect();
-				openfl__$internal_renderer_canvas_CanvasGraphics.drawRoundRect(openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c5) - offsetX,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c5) - offsetY,openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c5),openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c5));
+				var c5;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
+				c5 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.drawRoundRect(c5.buffer.f[c5.fPos] - offsetX,c5.buffer.f[c5.fPos + 1] - offsetY,c5.buffer.f[c5.fPos + 2],c5.buffer.f[c5.fPos + 3],c5.buffer.f[c5.fPos + 4],c5.buffer.o[c5.oPos]);
 				break;
 			case 16:
-				var c6 = data.readLineTo();
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6) - offsetX,openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6) - offsetY);
-				positionX = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c6);
-				positionY = openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c6);
+				var c6;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
+				c6 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.lineTo(c6.buffer.f[c6.fPos] - offsetX,c6.buffer.f[c6.fPos + 1] - offsetY);
+				positionX = c6.buffer.f[c6.fPos];
+				positionY = c6.buffer.f[c6.fPos + 1];
 				break;
 			case 17:
-				var c7 = data.readMoveTo();
-				openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7) - offsetX,openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7) - offsetY);
-				positionX = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c7);
-				positionY = openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c7);
+				var c7;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
+				c7 = data;
+				openfl__$internal_renderer_canvas_CanvasGraphics.context.moveTo(c7.buffer.f[c7.fPos] - offsetX,c7.buffer.f[c7.fPos + 1] - offsetY);
+				positionX = c7.buffer.f[c7.fPos];
+				positionY = c7.buffer.f[c7.fPos + 1];
 				break;
 			default:
-				data.skip(type);
+				data.advance();
+				data.prev = type;
 			}
 		}
 		data.destroy();
@@ -60299,9 +60407,12 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 			++_g;
 			switch(type[1]) {
 			case 0:
-				var c = data.readBeginBitmapFill();
+				var c;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_BITMAP_FILL;
+				c = data;
 				openfl__$internal_renderer_opengl_utils_PathBuiler.endFill();
-				if(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c) != null) openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.Texture(openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_bitmap(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_matrix(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_repeat(c),openfl__$internal_renderer__$DrawCommandReader_BeginBitmapFillView_$Impl_$.get_smooth(c)); else openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.None;
+				if(c.buffer.o[c.oPos] != null) openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.Texture(c.buffer.o[c.oPos],c.buffer.o[c.oPos + 1],c.buffer.b[c.bPos],c.buffer.b[c.bPos + 1]); else openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.None;
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
 					if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
@@ -60312,9 +60423,12 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				}
 				break;
 			case 1:
-				var c1 = data.readBeginFill();
+				var c1;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.BEGIN_FILL;
+				c1 = data;
 				openfl__$internal_renderer_opengl_utils_PathBuiler.endFill();
-				if(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c1) > 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.Color(openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_color(c1) & 16777215,openfl__$internal_renderer__$DrawCommandReader_BeginFillView_$Impl_$.get_alpha(c1)); else openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.None;
+				if(c1.buffer.f[c1.fPos] > 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.Color(c1.buffer.i[c1.iPos] & 16777215,c1.buffer.f[c1.fPos]); else openfl__$internal_renderer_opengl_utils_PathBuiler.__fill = openfl__$internal_renderer_opengl_utils_FillType.None;
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
 					if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
@@ -60325,48 +60439,84 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				}
 				break;
 			case 3:
-				var c2 = data.readCubicCurveTo();
-				openfl__$internal_renderer_opengl_utils_PathBuiler.cubicCurveTo(openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX1(c2),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY1(c2),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlX2(c2),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_controlY2(c2),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorX(c2),openfl__$internal_renderer__$DrawCommandReader_CubicCurveToView_$Impl_$.get_anchorY(c2));
+				var c2;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CUBIC_CURVE_TO;
+				c2 = data;
+				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
+					if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Polygon;
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(0);
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(0);
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
+				}
+				openfl__$internal_renderer_GraphicsPaths.cubicCurveTo(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points,c2.buffer.f[c2.fPos],c2.buffer.f[c2.fPos + 1],c2.buffer.f[c2.fPos + 2],c2.buffer.f[c2.fPos + 3],c2.buffer.f[c2.fPos + 4],c2.buffer.f[c2.fPos + 5]);
 				break;
 			case 4:
-				var c3 = data.readCurveTo();
-				openfl__$internal_renderer_opengl_utils_PathBuiler.curveTo(openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlX(c3),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_controlY(c3),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorX(c3),openfl__$internal_renderer__$DrawCommandReader_CurveToView_$Impl_$.get_anchorY(c3));
+				var c3;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.CURVE_TO;
+				c3 = data;
+				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
+					if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Polygon;
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(0);
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(0);
+					openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
+				}
+				openfl__$internal_renderer_GraphicsPaths.curveTo(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points,c3.buffer.f[c3.fPos],c3.buffer.f[c3.fPos + 1],c3.buffer.f[c3.fPos + 2],c3.buffer.f[c3.fPos + 3]);
 				break;
 			case 5:
-				var c4 = data.readDrawCircle();
+				var c4;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_CIRCLE;
+				c4 = data;
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Circle;
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_x(c4),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_y(c4),openfl__$internal_renderer__$DrawCommandReader_DrawCircleView_$Impl_$.get_radius(c4)];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [c4.buffer.f[c4.fPos],c4.buffer.f[c4.fPos + 1],c4.buffer.f[c4.fPos + 2]];
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 6:
-				var c5 = data.readDrawEllipse();
+				var c5;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ELLIPSE;
+				c5 = data;
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Ellipse;
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_x(c5),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_y(c5),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_width(c5),openfl__$internal_renderer__$DrawCommandReader_DrawEllipseView_$Impl_$.get_height(c5)];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [c5.buffer.f[c5.fPos],c5.buffer.f[c5.fPos + 1],c5.buffer.f[c5.fPos + 2],c5.buffer.f[c5.fPos + 3]];
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 8:
-				var c6 = data.readDrawRect();
+				var c6;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_RECT;
+				c6 = data;
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Rectangle(false);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_x(c6),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_y(c6),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_width(c6),openfl__$internal_renderer__$DrawCommandReader_DrawRectView_$Impl_$.get_height(c6)];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [c6.buffer.f[c6.fPos],c6.buffer.f[c6.fPos + 1],c6.buffer.f[c6.fPos + 2],c6.buffer.f[c6.fPos + 3]];
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 9:
-				var c7 = data.readDrawRoundRect();
-				var x = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_x(c7);
-				var y = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_y(c7);
-				var width = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_width(c7);
-				var height = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_height(c7);
-				var rx = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseWidth(c7);
-				var ry = openfl__$internal_renderer__$DrawCommandReader_DrawRoundRectView_$Impl_$.get_ellipseHeight(c7);
+				var c7;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_ROUND_RECT;
+				c7 = data;
+				var x = c7.buffer.f[c7.fPos];
+				var y = c7.buffer.f[c7.fPos + 1];
+				var width = c7.buffer.f[c7.fPos + 2];
+				var height = c7.buffer.f[c7.fPos + 3];
+				var rx = c7.buffer.f[c7.fPos + 4];
+				var ry = c7.buffer.o[c7.oPos];
 				if(ry == null) ry = rx;
 				rx *= 0.5;
 				ry *= 0.5;
@@ -60380,25 +60530,26 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 12:
-				var c8 = data.readEndFill();
+				var c8;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.END_FILL;
+				c8 = data;
 				openfl__$internal_renderer_opengl_utils_PathBuiler.endFill();
 				break;
 			case 15:
-				var c9 = data.readLineStyle();
+				var c9;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_STYLE;
+				c9 = data;
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__line = new openfl__$internal_renderer_opengl_utils_LineStyle();
-				if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c9) == null || (function($this) {
-					var $r;
-					var f = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c9);
-					$r = isNaN(f);
-					return $r;
-				}(this)) || openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c9) < 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = 0; else if(openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c9) == 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = 1; else openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_thickness(c9);
+				if(c9.buffer.o[c9.oPos] == null || isNaN(c9.buffer.o[c9.oPos]) || c9.buffer.o[c9.oPos] < 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = 0; else if(c9.buffer.o[c9.oPos] == 0) openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = 1; else openfl__$internal_renderer_opengl_utils_PathBuiler.__line.width = c9.buffer.o[c9.oPos];
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.color = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_color(c9);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.alpha = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_alpha(c9);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.scaleMode = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_scaleMode(c9);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.caps = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_caps(c9);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.joints = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_joints(c9);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.miterLimit = openfl__$internal_renderer__$DrawCommandReader_LineStyleView_$Impl_$.get_miterLimit(c9);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.color = c9.buffer.i[c9.iPos];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.alpha = c9.buffer.f[c9.fPos];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.scaleMode = c9.buffer.o[c9.oPos + 1];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.caps = c9.buffer.o[c9.oPos + 2];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.joints = c9.buffer.o[c9.oPos + 3];
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__line.miterLimit = c9.buffer.f[c9.fPos + 1];
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points = [];
@@ -60406,19 +60557,34 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 16:
-				var c10 = data.readLineTo();
-				openfl__$internal_renderer_opengl_utils_PathBuiler.lineTo(openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_x(c10),openfl__$internal_renderer__$DrawCommandReader_LineToView_$Impl_$.get_y(c10));
+				var c10;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.LINE_TO;
+				c10 = data;
+				openfl__$internal_renderer_opengl_utils_PathBuiler.lineTo(c10.buffer.f[c10.fPos],c10.buffer.f[c10.fPos + 1]);
 				break;
 			case 17:
-				var c11 = data.readMoveTo();
-				openfl__$internal_renderer_opengl_utils_PathBuiler.moveTo(openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_x(c11),openfl__$internal_renderer__$DrawCommandReader_MoveToView_$Impl_$.get_y(c11));
+				var c11;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.MOVE_TO;
+				c11 = data;
+				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.Polygon;
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(c11.buffer.f[c11.fPos]);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.push(c11.buffer.f[c11.fPos + 1]);
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 11:
-				var c12 = data.readDrawTriangles();
-				var uvtData = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_uvtData(c12);
-				var vertices = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_vertices(c12);
-				var indices = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_indices(c12);
-				var culling = openfl__$internal_renderer__$DrawCommandReader_DrawTrianglesView_$Impl_$.get_culling(c12);
+				var c12;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TRIANGLES;
+				c12 = data;
+				var uvtData = c12.buffer.o[c12.oPos + 2];
+				var vertices = c12.buffer.o[c12.oPos];
+				var indices = c12.buffer.o[c12.oPos + 1];
+				var culling = c12.buffer.o[c12.oPos + 3];
 				var isColor;
 				{
 					var _g2 = openfl__$internal_renderer_opengl_utils_PathBuiler.__fill;
@@ -60489,19 +60655,25 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 10:
-				var c13 = data.readDrawTiles();
+				var c13;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_TILES;
+				c13 = data;
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex++;
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath(false);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.DrawTiles(openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_sheet(c13),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_tileData(c13),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_smooth(c13),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_flags(c13),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_shader(c13),openfl__$internal_renderer__$DrawCommandReader_DrawTilesView_$Impl_$.get_count(c13));
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.DrawTiles(c13.buffer.ts[c13.tsPos],c13.buffer.ff[c13.ffPos],c13.buffer.b[c13.bPos],c13.buffer.i[c13.iPos],c13.buffer.o[c13.oPos],c13.buffer.i[c13.iPos + 1]);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable = false;
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			case 7:
-				var c14 = data.readDrawPath();
+				var c14;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.DRAW_PATH;
+				c14 = data;
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
-				var _g22 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_winding(c14);
+				var _g22 = c14.buffer.o[c14.oPos + 2];
 				switch(_g22) {
 				case "evenOdd":
 					openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding = 0;
@@ -60521,19 +60693,14 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				var ay;
 				var idx = 0;
 				var _g31 = 0;
-				var _g23;
-				var this5 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_commands(c14);
-				_g23 = this5.length;
+				var _g23 = c14.buffer.o[c14.oPos].length;
 				while(_g31 < _g23) {
 					var i1 = _g31++;
-					var this6 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_commands(c14);
-					command = this6.data[i1];
+					command = c14.buffer.o[c14.oPos].data[i1];
 					switch(command) {
 					case 1:
-						var this7 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ax = this7.data[idx];
-						var this8 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ay = this8.data[idx + 1];
+						ax = c14.buffer.o[c14.oPos + 1].data[idx];
+						ay = c14.buffer.o[c14.oPos + 1].data[idx + 1];
 						idx += 2;
 						if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 						openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
@@ -60544,10 +60711,8 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 						openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 						break;
 					case 4:
-						var this9 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ax = this9.data[idx + 2];
-						var this10 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ay = this10.data[idx + 3];
+						ax = c14.buffer.o[c14.oPos + 1].data[idx + 2];
+						ay = c14.buffer.o[c14.oPos + 1].data[idx + 3];
 						idx += 4;
 						if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 						openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
@@ -60558,30 +60723,22 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 						openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 						break;
 					case 2:
-						var this11 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ax = this11.data[idx];
-						var this12 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ay = this12.data[idx + 1];
+						ax = c14.buffer.o[c14.oPos + 1].data[idx];
+						ay = c14.buffer.o[c14.oPos + 1].data[idx + 1];
 						idx += 2;
 						openfl__$internal_renderer_opengl_utils_PathBuiler.lineTo(ax,ay);
 						break;
 					case 5:
-						var this13 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ax = this13.data[idx + 2];
-						var this14 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ay = this14.data[idx + 3];
+						ax = c14.buffer.o[c14.oPos + 1].data[idx + 2];
+						ay = c14.buffer.o[c14.oPos + 1].data[idx + 3];
 						idx += 4;
 						openfl__$internal_renderer_opengl_utils_PathBuiler.lineTo(ax,ay);
 						break;
 					case 3:
-						var this15 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						cx = this15.data[idx];
-						var this16 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						cy = this16.data[idx + 1];
-						var this17 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ax = this17.data[idx + 2];
-						var this18 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ay = this18.data[idx + 3];
+						cx = c14.buffer.o[c14.oPos + 1].data[idx];
+						cy = c14.buffer.o[c14.oPos + 1].data[idx + 1];
+						ax = c14.buffer.o[c14.oPos + 1].data[idx + 2];
+						ay = c14.buffer.o[c14.oPos + 1].data[idx + 3];
 						idx += 4;
 						if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
 							if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
@@ -60595,18 +60752,12 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 						openfl__$internal_renderer_GraphicsPaths.curveTo(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points,cx,cy,ax,ay);
 						break;
 					case 6:
-						var this19 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						cx = this19.data[idx];
-						var this20 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						cy = this20.data[idx + 1];
-						var this21 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						cx2 = this21.data[idx + 2];
-						var this22 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						cy2 = this22.data[idx + 3];
-						var this23 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ax = this23.data[idx + 4];
-						var this24 = openfl__$internal_renderer__$DrawCommandReader_DrawPathView_$Impl_$.get_data(c14);
-						ay = this24.data[idx + 5];
+						cx = c14.buffer.o[c14.oPos + 1].data[idx];
+						cy = c14.buffer.o[c14.oPos + 1].data[idx + 1];
+						cx2 = c14.buffer.o[c14.oPos + 1].data[idx + 2];
+						cy2 = c14.buffer.o[c14.oPos + 1].data[idx + 3];
+						ax = c14.buffer.o[c14.oPos + 1].data[idx + 4];
+						ay = c14.buffer.o[c14.oPos + 1].data[idx + 5];
 						idx += 6;
 						if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0) {
 							if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
@@ -60625,16 +60776,20 @@ openfl__$internal_renderer_opengl_utils_PathBuiler.build = function(graphics,gl)
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding = 0;
 				break;
 			case 18:
-				var c15 = data.readOverrideMatrix();
+				var c15;
+				data.advance();
+				data.prev = openfl__$internal_renderer_DrawCommandType.OVERRIDE_MATRIX;
+				c15 = data;
 				if(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable && (openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points == null || openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.points.length == 0)) openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.pop(); else openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath = new openfl__$internal_renderer_opengl_utils_DrawPath();
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.update(openfl__$internal_renderer_opengl_utils_PathBuiler.__line,openfl__$internal_renderer_opengl_utils_PathBuiler.__fill,openfl__$internal_renderer_opengl_utils_PathBuiler.__fillIndex,openfl__$internal_renderer_opengl_utils_PathBuiler.__currentWinding);
-				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.OverrideMatrix(openfl__$internal_renderer__$DrawCommandReader_OverrideMatrixView_$Impl_$.get_matrix(c15));
+				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.type = openfl__$internal_renderer_opengl_utils_GraphicType.OverrideMatrix(c15.buffer.o[c15.oPos]);
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath.isRemovable = false;
 				openfl__$internal_renderer_opengl_utils_PathBuiler.__drawPaths.push(openfl__$internal_renderer_opengl_utils_PathBuiler.__currentPath);
 				break;
 			default:
-				data.skip(type);
+				data.advance();
+				data.prev = type;
 			}
 		}
 		openfl__$internal_renderer_opengl_utils_PathBuiler.closePath();
@@ -63732,7 +63887,6 @@ openfl_display_Bitmap.prototype = $extend(openfl_display_DisplayObject.prototype
 		if(this.__scrollRect != null) renderSession.maskManager.popRect();
 	}
 	,__updateMask: function(maskGraphics) {
-		if(this.bitmapData == null) return;
 		maskGraphics.__commands.overrideMatrix(this.__worldTransform);
 		maskGraphics.beginFill(0);
 		maskGraphics.drawRect(0,0,this.bitmapData.width,this.bitmapData.height);
@@ -64974,7 +65128,7 @@ openfl_display_Loader.prototype = $extend(openfl_display_DisplayObjectContainer.
 		if(extension.indexOf("?") != -1) extension = extension.split("?")[0];
 		var transparent = true;
 		this.contentLoaderInfo.url = request.url;
-		if(request.contentType == null || request.contentType == "") switch(extension) {
+		if(request.contentType == null && request.contentType != "") switch(extension) {
 		case "swf":
 			this.contentLoaderInfo.contentType = "application/x-shockwave-flash";
 			break;
@@ -65702,6 +65856,7 @@ openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.p
 			switch(_g[1]) {
 			case 0:
 				var gl = _g[2];
+				this.__renderer = new openfl__$internal_renderer_opengl_GLRenderer(this.stageWidth,this.stageHeight,gl);
 				break;
 			case 1:
 				var context = _g[2];
@@ -65709,12 +65864,15 @@ openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.p
 				break;
 			case 2:
 				var element = _g[2];
+				this.__renderer = new openfl__$internal_renderer_dom_DOMRenderer(this.stageWidth,this.stageHeight,element);
 				break;
 			case 4:
 				var cairo = _g[2];
+				this.__renderer = new openfl__$internal_renderer_cairo_CairoRenderer(this.stageWidth,this.stageHeight,cairo);
 				break;
 			case 5:
 				var ctx = _g[2];
+				this.__renderer = new openfl__$internal_renderer_console_ConsoleRenderer(this.stageWidth,this.stageHeight,ctx);
 				break;
 			default:
 			}
@@ -65724,8 +65882,6 @@ openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.p
 		if(this.window == null || this.window != window) return;
 		var event = new openfl_events_Event("deactivate");
 		this.__broadcast(event,true);
-	}
-	,onWindowDropFile: function(window,file) {
 	}
 	,onWindowEnter: function(window) {
 	}
@@ -66453,16 +66609,12 @@ openfl_display_Stage.prototype = $extend(openfl_display_DisplayObjectContainer.p
 		case 2:
 			if(this.window.__fullscreen) {
 				this.window.set_fullscreen(false);
-				this.stageWidth = this.window.__width * this.window.__scale | 0;
-				this.stageHeight = this.window.__height * this.window.__scale | 0;
 				this.dispatchEvent(new openfl_events_FullScreenEvent("fullScreen",false,false,false,true));
 			}
 			break;
 		default:
 			if(!this.window.__fullscreen) {
 				this.window.set_fullscreen(true);
-				this.stageWidth = this.window.__width * this.window.__scale | 0;
-				this.stageHeight = this.window.__height * this.window.__scale | 0;
 				this.dispatchEvent(new openfl_events_FullScreenEvent("fullScreen",false,false,true,true));
 			}
 		}
@@ -66744,46 +66896,22 @@ openfl_display3D_Context3D.prototype = {
 			this.__updateBlendStatus();
 			this.drawing = true;
 		}
-		if(this.scissorRectangle != null) lime_graphics_opengl_GL.context.disable(3089);
 		lime_graphics_opengl_GL.context.clearColor(red,green,blue,alpha);
 		lime_graphics_opengl_GL.context.clearDepth(depth);
 		lime_graphics_opengl_GL.context.clearStencil(stencil);
 		lime_graphics_opengl_GL.context.clear(mask);
-		if(this.scissorRectangle != null) lime_graphics_opengl_GL.context.enable(3089);
 	}
 	,configureBackBuffer: function(width,height,antiAlias,enableDepthAndStencil) {
 		if(enableDepthAndStencil == null) enableDepthAndStencil = true;
-		this.backBufferDepthAndStencil = enableDepthAndStencil;
-		this.updateDepthAndStencilState();
-		this.setBackBufferViewPort(null,null,width,height);
-		this.updateScissorRectangle();
-	}
-	,setBackBufferViewPort: function(x,y,width,height) {
-		if(x == null) x = this.scrollRect.x | 0;
-		if(y == null) y = this.scrollRect.y | 0;
-		if(width == null) width = this.scrollRect.width | 0;
-		if(height == null) height = this.scrollRect.height | 0;
-		this.scrollRect.x = x;
-		this.scrollRect.y = y;
-		this.scrollRect.width = width;
-		this.scrollRect.height = height;
-		this.ogl.set_width(x + width);
-		this.ogl.set_height(y + height);
-		this.updateBackBufferViewPort();
-	}
-	,updateBackBufferViewPort: function() {
-		if(!this.renderToTexture) lime_graphics_opengl_GL.context.viewport(this.scrollRect.x | 0,this.scrollRect.y | 0,this.scrollRect.width | 0,this.scrollRect.height | 0);
-	}
-	,updateDepthAndStencilState: function() {
-		var depthAndStencil;
-		if(this.renderToTexture) depthAndStencil = this.rttDepthAndStencil; else depthAndStencil = this.backBufferDepthAndStencil;
-		if(depthAndStencil) {
-			if(lime_app_Application.current.windows[0].config.depthBuffer) lime_graphics_opengl_GL.context.enable(2929);
-			if(lime_app_Application.current.windows[0].config.stencilBuffer) lime_graphics_opengl_GL.context.enable(2960);
-		} else {
-			lime_graphics_opengl_GL.context.disable(2929);
-			lime_graphics_opengl_GL.context.disable(2960);
+		if(enableDepthAndStencil) {
+			lime_graphics_opengl_GL.context.enable(2929);
+			lime_graphics_opengl_GL.context.enable(2960);
 		}
+		this.ogl.set_scrollRect(new openfl_geom_Rectangle(0,0,width,height));
+		this.ogl.set_width(width);
+		this.ogl.set_height(height);
+		this.scrollRect = this.ogl.get_scrollRect().clone();
+		lime_graphics_opengl_GL.context.viewport(this.scrollRect.x | 0,this.scrollRect.y | 0,this.scrollRect.width | 0,this.scrollRect.height | 0);
 	}
 	,createCubeTexture: function(size,format,optimizeForRenderToTexture,streamingLevels) {
 		if(streamingLevels == null) streamingLevels = 0;
@@ -67045,7 +67173,6 @@ openfl_display3D_Context3D.prototype = {
 		if(bufferOffset == null) bufferOffset = 0;
 		var location;
 		if(this.currentProgram != null && this.currentProgram.glProgram != null) location = lime_graphics_opengl_GL.context.getAttribLocation(this.currentProgram.glProgram,locationName); else location = -1;
-		if(location == -1) return;
 		if(buffer == null) {
 			if(location > -1) lime_graphics_opengl_GL.context.disableVertexAttribArray(location);
 			return;
@@ -67127,13 +67254,9 @@ openfl_display3D_Context3D.prototype = {
 		lime_graphics_opengl_GL.context.disable(2929);
 		lime_graphics_opengl_GL.context.disable(2960);
 		lime_graphics_opengl_GL.context.disable(3089);
-		lime_graphics_opengl_GL.context.bindFramebuffer(36160,null);
 		if(this.framebuffer != null) lime_graphics_opengl_GL.context.bindFramebuffer(36160,null);
 		if(this.renderbuffer != null) lime_graphics_opengl_GL.context.bindRenderbuffer(36161,null);
-		this.renderToTexture = false;
-		this.updateBackBufferViewPort();
-		this.updateScissorRectangle();
-		this.updateDepthAndStencilState();
+		lime_graphics_opengl_GL.context.viewport(this.scrollRect.x | 0,this.scrollRect.y | 0,this.scrollRect.width | 0,this.scrollRect.height | 0);
 	}
 	,setRenderToTexture: function(texture,enableDepthAndStencil,antiAlias,surfaceSelector) {
 		if(surfaceSelector == null) surfaceSelector = 0;
@@ -67143,7 +67266,7 @@ openfl_display3D_Context3D.prototype = {
 		lime_graphics_opengl_GL.context.bindFramebuffer(36160,this.framebuffer);
 		if(this.renderbuffer == null) this.renderbuffer = lime_graphics_opengl_GL.context.createRenderbuffer();
 		lime_graphics_opengl_GL.context.bindRenderbuffer(36161,this.renderbuffer);
-		if(enableDepthAndStencil) lime_graphics_opengl_GL.context.renderbufferStorage(36161,34041,texture.width,texture.height);
+		lime_graphics_opengl_GL.context.renderbufferStorage(36161,6408,texture.width,texture.height);
 		lime_graphics_opengl_GL.context.framebufferTexture2D(36160,36064,3553,texture.glTexture,0);
 		lime_graphics_opengl_GL.context.renderbufferStorage(36161,34041,texture.width,texture.height);
 		lime_graphics_opengl_GL.context.framebufferRenderbuffer(36160,33306,36161,this.renderbuffer);
@@ -67156,12 +67279,6 @@ openfl_display3D_Context3D.prototype = {
 		lime_graphics_opengl_GL.context.texParameteri(3553,10240,9729);
 		lime_graphics_opengl_GL.context.texParameteri(3553,10241,9985);
 		lime_graphics_opengl_GL.context.viewport(0,0,texture.width,texture.height);
-		this.renderToTexture = true;
-		this.rttDepthAndStencil = enableDepthAndStencil;
-		this.rttWidth = texture.width;
-		this.rttHeight = texture.height;
-		this.updateScissorRectangle();
-		this.updateDepthAndStencilState();
 	}
 	,setSamplerStateAt: function(sampler,wrap,filter,mipfilter) {
 		if(0 <= sampler && sampler < openfl_display3D_Context3D.MAX_SAMPLERS) {
@@ -67171,19 +67288,12 @@ openfl_display3D_Context3D.prototype = {
 		} else throw new js__$Boot_HaxeError("Sampler is out of bounds.");
 	}
 	,setScissorRectangle: function(rectangle) {
-		this.scissorRectangle = rectangle;
 		if(rectangle == null) {
 			lime_graphics_opengl_GL.context.disable(3089);
 			return;
 		}
 		lime_graphics_opengl_GL.context.enable(3089);
-		this.updateScissorRectangle();
-	}
-	,updateScissorRectangle: function() {
-		if(this.scissorRectangle == null) return;
-		var height;
-		if(this.renderToTexture) height = this.rttHeight; else height = this.scrollRect.height | 0;
-		lime_graphics_opengl_GL.context.scissor(this.scissorRectangle.x | 0,height - (this.scissorRectangle.y | 0) - (this.scissorRectangle.height | 0) | 0,this.scissorRectangle.width | 0,this.scissorRectangle.height | 0);
+		lime_graphics_opengl_GL.context.scissor(rectangle.x | 0,rectangle.y | 0,rectangle.width | 0,rectangle.height | 0);
 	}
 	,setStencilActions: function(triangleFace,compareMode,actionOnBothPass,actionOnDepthFail,actionOnDepthPassStencilFail) {
 		this.stencilCompareMode = compareMode;
@@ -74403,7 +74513,7 @@ lime_math_color__$RGBA_RGBA_$Impl_$.__alpha16 = this1;
 var _g = 0;
 while(_g < 256) {
 	var i = _g++;
-	var val = Math.ceil(i * 257.00392156862745);
+	var val = Math.ceil(i * 257.003921568627447);
 	lime_math_color__$RGBA_RGBA_$Impl_$.__alpha16[i] = val;
 }
 var this2;
@@ -74430,8 +74540,14 @@ openfl_display_DisplayObject.__instanceCount = 0;
 openfl_display_DisplayObject.__worldRenderDirty = 0;
 openfl_display_DisplayObject.__worldTransformDirty = 0;
 openfl_display_DisplayObject.__cacheAsBitmapMode = false;
+AssetPaths.PixelOperator__eot = "assets/fonts/PixelOperator.eot";
+AssetPaths.PixelOperator__svg = "assets/fonts/PixelOperator.svg";
 AssetPaths.PixelOperator__ttf = "assets/fonts/PixelOperator.ttf";
+AssetPaths.PixelOperator__woff = "assets/fonts/PixelOperator.woff";
+AssetPaths.PixelOperatorBold__eot = "assets/fonts/PixelOperatorBold.eot";
+AssetPaths.PixelOperatorBold__svg = "assets/fonts/PixelOperatorBold.svg";
 AssetPaths.PixelOperatorBold__ttf = "assets/fonts/PixelOperatorBold.ttf";
+AssetPaths.PixelOperatorBold__woff = "assets/fonts/PixelOperatorBold.woff";
 AssetPaths.anode__png = "assets/images/anode.png";
 AssetPaths.anode_button__png = "assets/images/anode_button.png";
 AssetPaths.bg__png = "assets/images/bg.png";
@@ -74441,16 +74557,16 @@ AssetPaths.fail_stamp__png = "assets/images/fail_stamp.png";
 AssetPaths.gameover__png = "assets/images/gameover.png";
 AssetPaths.ground__png = "assets/images/ground.png";
 AssetPaths.ground_button__png = "assets/images/ground_button.png";
+AssetPaths.in_button__png = "assets/images/in_button.png";
 AssetPaths.input__png = "assets/images/input.png";
 AssetPaths.input_button__png = "assets/images/input_button.png";
-AssetPaths.in_button__png = "assets/images/in_button.png";
 AssetPaths.junction__png = "assets/images/junction.png";
 AssetPaths.junction_activated__png = "assets/images/junction_activated.png";
 AssetPaths.junction_button__png = "assets/images/junction_button.png";
 AssetPaths.ok_stamp__png = "assets/images/ok_stamp.png";
+AssetPaths.out_button__png = "assets/images/out_button.png";
 AssetPaths.output__png = "assets/images/output.png";
 AssetPaths.output_button__png = "assets/images/output_button.png";
-AssetPaths.out_button__png = "assets/images/out_button.png";
 AssetPaths.paper__jpg = "assets/images/paper.jpg";
 AssetPaths.paper2__jpg = "assets/images/paper2.jpg";
 AssetPaths.screen__png = "assets/images/screen.png";
@@ -75370,7 +75486,7 @@ flixel_input_mouse__$FlxMouse_GraphicCursor.resourceType = "image/png";
 flixel_input_mouse__$FlxMouse_GraphicCursor.resourceName = "__ASSET__:bitmap_flixel_input_mouse__FlxMouse_GraphicCursor";
 flixel_input_touch_FlxTouchManager.maxTouchPoints = 0;
 flixel_math_FlxVector.EPSILON = 0.0000001;
-flixel_math_FlxVector.EPSILON_SQUARED = 9.9999999999999984e-015;
+flixel_math_FlxVector.EPSILON_SQUARED = 9.99999999999999841e-15;
 flixel_math_FlxVector._pool = new flixel_util_FlxPool_$flixel_$math_$FlxVector(flixel_math_FlxVector);
 flixel_math_FlxVector._vector1 = new flixel_math_FlxVector();
 flixel_math_FlxVector._vector2 = new flixel_math_FlxVector();
@@ -75440,12 +75556,12 @@ flixel_text__$FlxText_FlxTextAlign_$Impl_$.RIGHT = "right";
 flixel_text__$FlxText_FlxTextAlign_$Impl_$.JUSTIFY = "justify";
 flixel_tweens_FlxEase.PI2 = Math.PI / 2;
 flixel_tweens_FlxEase.EL = 2 * Math.PI / .45;
-flixel_tweens_FlxEase.B1 = 0.36363636363636365;
-flixel_tweens_FlxEase.B2 = 0.72727272727272729;
-flixel_tweens_FlxEase.B3 = 0.54545454545454541;
-flixel_tweens_FlxEase.B4 = 0.90909090909090906;
-flixel_tweens_FlxEase.B5 = 0.81818181818181823;
-flixel_tweens_FlxEase.B6 = 0.95454545454545459;
+flixel_tweens_FlxEase.B1 = 0.363636363636363646;
+flixel_tweens_FlxEase.B2 = 0.727272727272727293;
+flixel_tweens_FlxEase.B3 = 0.545454545454545414;
+flixel_tweens_FlxEase.B4 = 0.909090909090909061;
+flixel_tweens_FlxEase.B5 = 0.818181818181818232;
+flixel_tweens_FlxEase.B6 = 0.954545454545454586;
 flixel_tweens_FlxEase.ELASTIC_AMPLITUDE = 1;
 flixel_tweens_FlxEase.ELASTIC_PERIOD = 0.4;
 flixel_tweens_FlxTween.PERSIST = 1;
