@@ -44382,6 +44382,7 @@ lime__$backend_html5_HTML5Window.prototype = {
 		} else this.parent.onMouseWheel.dispatch(event.deltaX,-event.deltaY);
 	}
 	,handleResize: function() {
+		return false;
 		var stretch = this.parent.__fullscreen || this.setWidth == 0 && this.setHeight == 0;
 		if(this.element != null && (this.div == null || this.div != null && stretch)) {
 			if(stretch) {
