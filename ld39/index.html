@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" href="style/layout.css"/>
+        <link rel="stylesheet" href="style/style.css"/>
+        <link rel="stylesheet" href="style/tippy.css"/>
+        <script src="js/lib/underscore.js"></script>
+        <script src="js/lib/svg.js"></script>
+        <script src="js/lib/jquery.js"></script>
+        <script src="js/lib/tippy.js"></script>
+    </head>
+    <body>
+        <h1>Ousted</h1>
+        <div id="play-area">
+            <div id="lose-screen">
+                <h1 id="lose-title">You were ousted.</h1>
+                <h1 id="lose-reason">The Ministers organised a coup and overthrew you.</h1>
+                <h2 id="lose-time">You reigned for 25 weeks.</h2>
+                <div id="btn-play-again">Play Again?</div>
+            </div>
+            <div id="left-container">
+                <div id="log-container">
+                    <h1>Events</h1>
+                    <div id="logs">
+                    </div>
+                </div>
+                <div id="calendar">
+                    <h1>2020, January, Week 1</h1>
+                    <div id="btn-step"><img src="img/next-week.png"></img></div>
+                </div>
+            </div>
+            <div id="right-container">
+                <div id="top-bar">
+                    <div id="regime-stats">
+                        <div id="might" class="tip" title="Might is a measure of how strong your armed forces are. A strong army makes it harder for a rebellion to occur.">
+                            <div id="might-pb-bg">
+                                <div id="might-pb"></div>
+                            </div>
+                            <div id="might-logo"></div>
+                        </div>
+                        <div id="resources" class="tip" title="Resources enable you to bribe officials. You passively gain 2 - 4 resources every week.">
+                            
+                            <div id="resources-bg">
+                                <div id="resources-num">100</div>
+                            </div>
+                            <div id="resources-logo"></div>
+                        </div>
+                    </div>
+                    <div id="portrait">
+                        <object data="img/portrait.svg" type="image/svg+xml"></object>
+                    </div>
+                    <div id="population-stats">
+                        <div id="rebellion" class="tip" title="This is the rebellion meter. It shows how ready the people are to start a rebellion. If it's greater than your might, you're in trouble. It changes based on the satiation and happiness of your people.">
+                            <div id="rebellion-pb-bg">
+                                <div id="rebellion-pb"></div>
+                            </div>
+                            <div id="rebellion-logo-1"></div>
+                            <div id="rebellion-logo-2"></div>
+                            <div id="rebellion-logo-3"></div>
+                        </div>
+                        <div id="num-stats">
+                            <div id="happiness" class="tip" title="This is the people's happiness. It increases when they are well-fed, and decreases when people are starving.">
+                                <div id="happiness-bg"><div id="happiness-num">100</div></div>
+                                <div id="happiness-logo"></div>
+                            </div>
+                            <div id="satiation" class="tip" title="This is the people's satiation (the opposite of hunger). You can increase it by asking for food from the production minister. It affects happiness.">
+                                <div id="satiation-bg">
+                                    <div id="satiation-num">100</div>
+                                </div>
+                                <div id="satiation-logo"></div>
+                            </div>
+                            <div id="faith" class="tip" title="This is the people's faith in your regime. It affects how quickly rebellions grow or are put down.">
+                                <div id="faith-bg">
+                                    <div id="faith-num">100</div>
+                                </div>
+                                <div id="faith-logo"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="bottom-bar">
+                    <div id="left-stats">
+                        <div class="minister-stats" id="minister-0">
+                            <div class="minister-info">
+                                <div class="minister-logo tip" title="The Ministry of Intelligence helps you create ... accidental deaths, and if in your favour will inform you about potential coups.">
+                                </div>
+                                <div class="minister-right">
+                                    <div class="minister-approval tip" title="This is the minister's approval of you. If ministers aren't happy with you, they may overthrow you.">
+                                        <div class="minister-approval-logo"></div>
+                                        <div class="minister-approval-pb-bg">
+                                            <div class="minister-approval-pb"></div>
+                                        </div>
+                                    </div>
+                                    <div class="minister-strength tip" title="This is the minister's strength. The stronger he is, the better able he is at pulling off assassinations and coups. Be careful of ministers that are strong and dislike you.">
+                                        <div class="minister-strength-logo"></div>
+                                        <div class="minister-strength-pb-bg">
+                                            <div class="minister-strength-pb"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="minister-title">
+                                Intelligence
+                            </div>
+                        </div>
+                        <div class="minister-stats" id="minister-2">
+                            <div class="minister-title">
+                                Security
+                            </div>
+                            <div class="minister-info">
+                                <div class="minister-logo tip" title="The Ministry of Security helps you build your army, which deters coups and rebellions.">
+                                </div>
+                                <div class="minister-right">
+                                    <div class="minister-approval tip" title="This is the minister's approval of you. If ministers aren't happy with you, they may overthrow you.">
+                                        <div class="minister-approval-logo"></div>
+                                        <div class="minister-approval-pb-bg">
+                                            <div class="minister-approval-pb"></div>
+                                        </div>
+                                    </div>
+                                    <div class="minister-strength tip" title="This is the minister's strength. The stronger he is, the better able he is at pulling off assassinations and coups. Be careful of ministers that are strong and dislike you.">
+                                        <div class="minister-strength-logo"></div>
+                                        <div class="minister-strength-pb-bg">
+                                            <div class="minister-strength-pb"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="web" class="tip" title="This is the web of relations. It shows how much the ministers like each other. It evolves over time - enemies of enemies tend to become friends, for example.">
+                    </div>
+                    <div id="right-stats">
+                        <div class="minister-stats" id="minister-1">
+                            <div class="minister-info">
+                                <div class="minister-logo tip" title="The Ministry of Truth helps to report the truth, and nudge it slightly if necessary. Use it to improve the people's faith in your regime.">
+                                </div>
+                                <div class="minister-right">
+                                    <div class="minister-approval tip" title="This is the minister's approval of you. If ministers aren't happy with you, they may overthrow you.">
+                                        <div class="minister-approval-logo"></div>
+                                        <div class="minister-approval-pb-bg">
+                                            <div class="minister-approval-pb"></div>
+                                        </div>
+                                    </div>
+                                    <div class="minister-strength tip" title="This is the minister's strength. The stronger he is, the better able he is at pulling off assassinations and coups. Be careful of ministers that are strong and dislike you.">
+                                        <div class="minister-strength-logo"></div>
+                                        <div class="minister-strength-pb-bg">
+                                            <div class="minister-strength-pb"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="minister-title">
+                                Truth
+                            </div>
+                        </div>
+                        <div class="minister-stats" id="minister-3">
+                            <div class="minister-title">
+                                Production
+                            </div>
+                            <div class="minister-info">
+                                <div class="minister-logo tip" title="The Ministry of Production helps you produce food, to satisfy your people.">
+                                </div>
+                                <div class="minister-right">
+                                    <div class="minister-approval tip" title="This is the minister's approval of you. If ministers aren't happy with you, they may overthrow you.">
+                                        <div class="minister-approval-logo"></div>
+                                        <div class="minister-approval-pb-bg">
+                                            <div class="minister-approval-pb"></div>
+                                        </div>
+                                    </div>
+                                    <div class="minister-strength tip" title="This is the minister's strength. The stronger he is, the better able he is at pulling off assassinations and coups. Be careful of ministers that are strong and dislike you.">
+                                        <div class="minister-strength-logo"></div>
+                                        <div class="minister-strength-pb-bg">
+                                            <div class="minister-strength-pb"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p>Made for Ludum Dare 39, @bradleyteo</p>
+        <script src="js/util.js"></script>
+        <script src="js/dom.js"></script>
+        <script src="js/game.js"></script>
+        <script>
+            tippy('.tip');
+        </script>
+    </body>
+</html>

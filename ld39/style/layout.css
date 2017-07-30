@@ -1,0 +1,467 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: black;
+}
+
+body > h1 {
+    font-family: Molot, sans-serif;
+    font-weight: 400;
+    color: white;
+    text-align: center;
+}
+
+body > p {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333;
+    text-align: center;
+}
+
+#play-area {
+    background-color: black;
+    height: 480px;
+    width: 960px;
+    position: relative;
+    box-sizing: content-box;
+    border: 2px solid #aaa;
+    margin: 0 auto;
+}
+
+#left-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 240px;
+}
+
+#right-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 720px;
+    background: linear-gradient(to top, rgba(38,38,38,1) 0%, rgba(10,10,10,1));
+}
+
+
+#log-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 320px;
+    background-color: orange;
+}
+
+#calendar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 160px;
+    background-color: orange;
+}
+
+#top-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 160px;
+}
+
+#bottom-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 320px;
+}
+
+#left-stats, #right-stats {
+    position: absolute;
+    width: 200px;
+    top: 0;
+    bottom: 0;
+}
+
+#left-stats {
+    left: 0;
+}
+
+#right-stats {
+    right: 0;
+}
+
+#log-container h1 {
+
+}
+
+#logs {
+    height: 280px;
+    overflow-y: scroll;
+}
+
+#regime-stats {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 300px;
+}
+
+#population-stats {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 300px;
+}
+
+#portrait {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 300px;
+    width: 120px;
+}
+
+#web {
+    position: absolute;
+    left: 200px;
+    top: 0;
+    bottom: 0;
+}
+
+.minister-stats {
+    width: 200px;
+    padding: 0;
+}
+
+#left-stats .minister-stats {
+    padding-left: 40px;
+}
+
+#right-stats .minister-stats {
+    padding-right: 40px;
+}
+
+.minister-info {
+    width: 100%;
+    display: inline-block;
+}
+
+.minister-logo {
+    width: 60px;
+    height: 80px;
+    margin-right: 2px;
+    float: left;
+    background-size: 60px 80px;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0px 0px 5px rgba(255,255,255,0.3));
+}
+
+#minister-0 .minister-logo {
+    background-image: url("../img/moi.png");
+}
+
+#minister-1 .minister-logo {
+    background-image: url("../img/mot.png");
+}
+
+#minister-2 .minister-logo {
+    background-image: url("../img/mos.png");
+}
+
+#minister-3 .minister-logo {
+    background-image: url("../img/mop.png");
+}
+
+.minister-right {
+    width: 98px;
+    padding-left: 5px;
+    float: left;
+}
+
+.minister-title {
+    width: 100%;
+    text-align: center;
+    padding: 5px 20px;
+}
+
+.minister-strength {
+    margin-top: 5px;
+}
+
+#minister-0 {
+    margin-top: 40px;
+}
+
+#minister-1 {
+    margin-top: 40px;
+}
+
+#minister-2 {
+    margin-top: 80px;
+}
+
+#minister-3 {
+    margin-top: 80px;
+}
+
+#might {
+    height: 50px;
+    width: 220px;
+    margin: 0 auto;
+    position: relative;
+    margin-top: 30px;
+}
+
+#might-logo, #resources-logo, #happiness-logo, #satiation-logo, #faith-logo {
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-size: 40px 40px;
+    z-index: 2;
+}
+
+#might-logo {
+    background-image: url("../img/might.png");
+}
+
+#might-pb-bg {
+    top: 14px;
+    padding: 0;
+    height: 24px;
+    width: 175px;
+    left: 40px;
+    background-color: #aaa;
+    position: absolute;
+    border-radius: 2px;
+}
+
+#might-pb {
+    width: 50%;
+    height: 24px;
+    background-color: #333;
+    border: 3px solid #aaa;
+}
+
+#resources {
+    height: 50px;
+    width: 130px;
+    margin: 0 auto;
+    margin-top: 0px;
+    position: relative;
+}
+
+#resources-bg {
+    top: 9px;
+    height: 32px;
+    width: 100px;
+    left: 25px;
+    border-radius: 2px;
+    background-color: #aaa;
+    position: absolute;
+}
+
+#resources-num {
+    float: right;
+    margin-right: 5px;
+    font-size: 28px;
+    font-family: "Molot", sans-serif;
+    color: #333;
+}
+
+#resources-logo {
+    background-image: url("../img/resources.png");
+}
+
+#num-stats {
+    width: 280px;
+    height: 50px;
+    display: flex;
+    justify-content: space-around;
+    margin: 0 auto;
+}
+
+#happiness, #satiation, #faith {
+    width: 90px;
+    height: 50px;
+    position: relative;
+}
+
+#happiness-logo {
+    background-image: url("../img/happiness.png");
+}
+
+#satiation-logo {
+    background-image: url("../img/satiation.png");
+}
+
+#faith-logo {
+    background-image: url("../img/faith.png");
+}
+
+#happiness-bg, #satiation-bg, #faith-bg {
+    top: 9px;
+    height: 32px;
+    width: 60px;
+    left: 25px;
+    border-radius: 2px;
+    background-color: #aaa;
+    position: absolute;
+}
+
+#happiness-num, #satiation-num, #faith-num {
+    float: right;
+    margin-right: 5px;
+    font-size: 28px;
+    font-family: "Molot", sans-serif;
+    color: #333;
+}
+
+#rebellion {
+    height: 50px;
+    width: 220px;
+    margin: 0 auto;
+    position: relative;
+    margin-top: 30px;
+}
+
+#rebellion-logo-1, #rebellion-logo-2, #rebellion-logo-3 {
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    background-size: 40px 40px;
+    z-index: 2;
+    top: 5px;
+}
+
+#rebellion-pb-bg {
+    top: 14px;
+    padding: 0;
+    height: 24px;
+    width: 210px;
+    left: 5px;
+    background-color: #aaa;
+    position: absolute;
+    border-radius: 2px;
+}
+
+#rebellion-logo-1 {
+    left: 0px;
+    background-image: url("../img/content.png");
+}
+
+#rebellion-logo-2 {
+    left: 90px;
+    background-image: url("../img/upset.png");
+}
+
+#rebellion-logo-3 {
+    right: 0px;
+    background-image: url("../img/revolt.png");
+}
+
+#rebellion-pb {
+    width: 0%;
+    height: 24px;
+    background-color: #333;
+    border: 3px solid #aaa;
+}
+
+.minister-approval, .minister-strength {
+    width: 100%;
+    height: 30px;
+    position: relative;
+}
+
+.minister-approval-pb, .minister-strength-pb {
+    height: 24px;
+    width: 100%;
+    background-color: #333;
+    border: 3px solid #ccc;
+}
+
+.minister-approval-pb-bg, .minister-strength-pb-bg {
+    background-color: #ccc;
+    border-radius: 2px;
+    height: 24px;
+    width: 70px;
+    left: 20px;
+    top: 3px;
+    position: absolute;
+}
+
+.minister-approval-logo, .minister-strength-logo {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    background-size: 30px 30px;
+    z-index: 2;
+}
+
+.minister-approval-logo {
+    background-image: url("../img/approval.png");
+}
+
+.minister-strength-logo {
+    background-image: url("../img/strength.png");
+}
+
+#lose-screen {
+    position: absolute;
+    transition: 1s ease-in-out all;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: #111;
+    color: white;
+    text-align: center;
+    z-index: -10;
+    opacity: 0;
+}
+
+#lose-title {
+    font-size: 50px;
+    margin-top: 100px;
+}
+
+#lose-reason {
+    font-weight: 400;
+}
+
+#lose-time {
+    font-weight: 400;
+}
+
+#lose-screen.active {
+    z-index: 10;
+    opacity: 1;
+}
+
+#btn-play-again {
+    background-color: orange;
+    color: black;
+    width: 200px;
+    height: 60px;
+    line-height: 60px;
+    margin: 0 auto;
+    margin-top: 50px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+#btn-play-again:hover {
+    background-color: darkorange;
+}
