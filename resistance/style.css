@@ -1,0 +1,431 @@
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+* {
+	box-sizing: border-box;
+	font-family: Barlow, sans-serif;
+	touch-action: manipulation;
+}
+
+@import url(http://weloveiconfonts.com/api/?family=entypo);
+
+/* entypo */
+[class*="entypo-"]:before {
+  font-family: 'entypo', sans-serif;
+}
+
+
+#app {
+	display: flex;
+	flex-flow: column;
+	height: 100%;
+	overflow: hidden;
+}
+
+.screen {
+	height: 100%;
+	position: relative;
+}
+
+.screen-container {
+	width: 100%;
+	height: 100%;
+	padding: 4rem;
+
+}
+
+.input-group {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.input-group input {
+	min-width: 0;
+	flex: 1;
+	border: 2px solid #ddd;
+	border-right: none;
+	font-size: 4em;
+	border-radius: 20px 0 0 20px;
+	padding: 2rem;
+	outline: none;
+}
+
+.input-group button {
+	flex: 0;
+	font-size: 4em;
+	font-family: Barlow, sans-serif;
+	background-color: #2196F3;
+	color: white;
+	border: none;
+	border-radius: 0 20px 20px 0;
+	padding: 2rem;
+	outline: none;
+}
+
+.expanding-btn {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	font-size: 3em;
+	padding: 4rem;
+	background-color: #1976D2;
+	color: white;
+}
+
+.bottom-bar {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	font-size: 3em;
+	padding: 4rem;
+	background-color: #2196F3;
+	color: white;
+}
+
+.invisible {
+	display: none;
+}
+
+/* name-select */
+#name-select {
+	height: 100%;
+}
+
+#name-select #title {
+	font-family: Bungee, sans-serif;
+	color: #424242;
+	font-size: 6em;
+	text-align: center;
+	margin-bottom: 6rem;
+	margin-top: 12rem;
+}
+
+.player-list {
+	margin-top: 2rem;
+	max-height: 55%;
+	overflow-y: scroll;
+}
+
+.player-list .player-div {
+	padding: 2rem;
+	font-size: 3em;
+	background-color: #f9f9f9;
+	border-radius: 20px;
+	margin-top: 1rem;
+	transition: all 0.5s;
+}
+
+.list-enter {
+	opacity: 0;
+	transform: translateY(-30px);
+}
+
+/* pass */
+#pass {
+	background-color: #388E3C;
+	text-align: center;
+	color: white;
+}
+
+#pass h2 {
+	font-size: 3em;
+	font-weight: 400;
+}
+
+#pass h1 {
+	font-size: 7em;
+	font-weight: bold;
+}
+
+#pass-main {
+	opacity: 0;
+	margin-top: 10%;
+}
+
+#pass-done {
+	position: fixed;
+	opacity: 0;
+	bottom: 0rem;
+	padding: 4rem;
+	font-size: 3em;
+	margin: 0 auto;
+	left: 0;
+	right: 0;
+}
+
+/* reveal */
+.reveal-role {
+	text-align: center;
+	color: #424242;
+}
+
+.reveal-role h2 {
+	font-weight: 400;
+	font-size: 3em;
+}
+
+.reveal-role h1 {
+	font-size: 5em;
+}
+
+#reveal-info {
+	opacity: 0;
+	margin-top: 0;
+}
+
+#reveal-spy h3 {
+	margin-top: 5rem;
+	font-size: 2.5em;
+	font-weight: 400;
+}
+
+/* team select */
+.leader-info {
+	text-align: center;
+	margin-top: 5rem;
+	color: #424242;
+}
+
+.leader-info h2 {
+	font-size: 3em;
+	font-weight: 400;
+}
+
+.leader-info h1 {
+	font-size: 7em;
+	font-weight: bold;	
+}
+
+#team-div {
+	margin-top: 3.5rem;
+	height: 100%;
+}
+
+#team-div h3 {
+	text-align: center;
+	font-size: 3em;
+	font-weight: 400;
+}
+
+#team-div h4 {
+	text-align: center;
+	font-size: 2em;
+	margin-top: 1rem;
+	font-weight: 400;
+}
+
+#team-div .player-list {
+	max-height: 60%;
+}
+
+#team-div .player-div {
+	transition: 0.1s all ease-out;
+}
+
+#team-div .player-div.selected {
+	background-color: #212121;
+	color: white;
+}
+
+/* team vote */
+#team-vote {
+	background-color: #f9f9f9;
+}
+
+#team-vote .player-div {
+	background-color: white;
+}
+
+#vote-instructions {
+	margin-top: 5rem;
+	font-size: 2.5em;
+	font-weight: 400;
+	line-height: 1.5;
+}
+
+#vote-btns {
+	margin-top: 5rem;
+}
+
+.vote-btn {
+	text-align: center;
+	padding: 2rem 3rem;
+	background-color: white;
+	border-radius: 20px;
+	margin-top: 1.5rem;
+}
+
+.vote-btn p {
+	font-size: 2.5em;
+	color: #424242;
+}
+
+.vote-btn h1 {
+	font-size: 3.5em;
+	font-weight: 400;
+	margin-top: 1.5rem;
+}
+
+.vote-btn.selected {
+	background-color: #424242;
+}
+
+.vote-btn.selected p {
+	color: white;
+}
+
+#vote-pass h1 {
+	color: #4CAF50;
+}
+
+#vote-fail h1 {
+	color: #F44336;
+}
+
+/* action-select */
+#action-select .player-div {
+	background-color: white;
+}
+
+#action-select .player-list {
+	margin-bottom: 5rem;
+}
+
+#action-select {
+	background-color: #f9f9f9;
+}
+
+.action-btn {
+	text-align: center;
+	padding: 4rem 4rem;
+	background-color: white;
+	border-radius: 20px;
+	margin-top: 1.5rem;
+}
+
+.action-btn h1 {
+	font-size: 3.5em;
+	font-weight: 400;
+}
+
+#action-success h1 {
+	color: #4CAF50;
+}
+
+.action-btn h2 {
+	font-size: 2.5em;
+	font-weight: 400;
+	margin-top: 1.5rem;
+	color: #424242;
+}
+
+#action-fail h1 {
+	color: #F44336;
+}
+
+#action-select .screen-container > h1 {
+	font-size: 3rem;
+	font-weight: 400;
+}
+
+.action-btn.selected {
+	background-color: #424242;
+}
+
+.action-btn.selected h2 {
+	color: white;
+}
+
+/* mission list */
+.mission-list {
+	display: flex;
+	justify-content: space-around;
+}
+
+.mission-circle {
+	flex: 1 0 auto;
+	height: 4.5rem;
+	width: 4.5rem;
+	border-radius: 50%;
+	background-color: #9E9E9E;
+	color: white;
+	text-align: center;
+	line-height: 4.5rem;
+	font-size: 2em;
+
+	transition: all 0.5s ease-in-out;
+}
+
+.mission-circle.spies {
+	background-color: #F44336;
+}
+
+.mission-circle.resistance {
+	background-color: #2196F3;
+}
+
+/* mission reveal */
+.votes-list {
+	margin-top: 5rem;
+}
+
+.vote {
+	padding: 2rem;
+	font-size: 3em;
+	background-color: #f9f9f9;
+	border-radius: 20px;
+	margin-top: 1rem;
+}
+
+.vote.success-vote {
+	color: white;
+	background-color: #2196F3;
+}
+
+.vote.fail-vote {
+	color: white;
+	background-color: #F44336;
+}
+
+#vote-result-title {
+	font-size: 3em;
+	text-align: center;
+	margin-top: 5rem;
+}
+
+#vote-result-title.success {
+	color: #2196F3;
+}
+
+#vote-result-title.fail {
+	color: #F44336;
+}
+
+/* resistance wins */
+.win h1 {
+	text-align: center;
+	margin-top: 3rem;
+	margin-bottom: 3rem;
+	font-size: 4rem;
+	font-weight: 400;
+}
+
+#resistance-win h1 {
+	color: #2196F3;
+}
+
+#spy-win h1 {
+	color: #F44336;
+}
+
+.win .spy {
+	background-color: #F44336;
+	color: white;
+}
+
+.win .resistance {
+	background-color: #2196F3;
+	color: white;
+}

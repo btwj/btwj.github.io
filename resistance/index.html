@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>Resistance</title>
+	<link rel="stylesheet" href="reset.css">
+	<link rel="stylesheet" href="style.css">
+	<link href="https://fonts.googleapis.com/css?family=Barlow:400,700|Bungee" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/umbrellajs@2.10.1/umbrella.min.js"></script>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.2.0/anime.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
+</head>
+<body>
+	<div id="app">
+		<div class="screen" id="name-select" v-if="screenActive === 'name-select'">
+			<div class="screen-container">
+				<h1 id="title">Resistance</h1>
+				<div class="input-group">
+					<input type="text" placeholder="Player" autocomplete="off" autocorrect="off" v-model="newPlayer">
+					<button class="input-button" @click="addPlayer">Add</button>
+				</div>
+				
+				<div class="player-list">
+					<transition-group name="list" tag="div">
+						<div class="player-div" v-for="player in players" :key="player.name"> {{ player.name }} </div>
+					</transition-group>
+				</div>
+
+			</div>
+			<div class="bottom-bar game-info">
+				{{ gameInfoMessage }}
+			</div>
+			<div class="expanding-btn" id="name-select-done-btn" @click="nameSelectDone">Go</div>
+		</div>
+		<div class="screen" id="role-reveal" v-show="screenActive === 'role-reveal' && !passActive">
+			<div class="screen-container">
+				<div id="reveal-info">
+					<div id="reveal-resistance" class="reveal-role" v-show="currentRole === 'resistance'">
+						<h2>YOU ARE A MEMBER OF THE</h2>
+						<h1>RESISTANCE</h1>
+					</div>
+					<div id="reveal-spy" class="reveal-role" v-show="currentRole === 'spy'">
+						<h2>YOU ARE A</h2>
+						<h1>SPY</h1>
+						<h3>THE OTHER SPIES ARE</h3>
+						<div class="player-list">
+							<div class="player-div" v-for="player in otherSpies"> {{ player.name }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="bottom-bar">
+				{{ activeName }}
+			</div>
+			<div class="expanding-btn" id="role-reveal-done-btn" @click="roleRevealDone">Go</div>
+		</div>
+		<div class="screen" id="team-select" v-show="screenActive === 'team-select' && !passActive">
+			<div class="screen-container">
+				<div class="mission-info">
+					<div class="mission-list">
+						<div class="mission-div" v-for="mission in missions">
+							<div class="mission-circle" :class="{spies: mission.completed && mission.sabotaged, resistance: mission.completed && !mission.sabotaged}"> {{ mission.size }} </div>
+						</div>
+					</div>
+				</div>
+				<div id="team-leader-info" class="leader-info">
+					<h2>MISSION LEADER</h2>
+					<h1>{{ activeName }}</h1>
+				</div>
+				<div id="team-div">
+					<h3>PICK {{ missions[missionId].size }} MEMBERS</h3>
+					<h4>{{ missions[missionId].to_fail }} FAIL{{ missions[missionId].to_fail > 1 ? "S" : ""}} NEEDED TO SABOTAGE</h4>
+					<div class="player-list">
+						<div class="player-div" v-for="player in players" @click="selectPlayer(player)" :class="{selected: player.selected}"> {{ player.name }} </div>
+					</div>
+				</div>
+			</div>
+			<div class="bottom-bar">
+				{{ activeName }}
+			</div>
+			<div class="expanding-btn" id="team-select-done-btn" @click="teamSelectDone">Go</div>
+		</div>
+		<div class="screen" id="team-vote" v-show="screenActive === 'team-vote' && !passActive">
+			<div class="screen-container">
+				<div id="vote-leader-info" class="leader-info">
+					<h2>MISSION LEADER</h2>
+					<h1>{{ activeName }}</h1>
+				</div>
+				<div id="vote-team-div">
+					<div class="player-list">
+						<div class="player-div" v-for="player in selectedPlayers" @click="selectPlayer(player)"> {{ player.name }} </div>
+					</div>
+				</div>
+				<div id="vote-instructions">
+					Perform an open, simultaneous vote on the team proposed. {{ Math.floor(players.length/2) + 1 }} or more players must vote yes.
+				</div>
+				<div id="vote-btns">
+					<div class="vote-btn" id="vote-pass" :class="{selected: voteBtnSelected && passSelected}" @click="passBtnSelected">
+						<p>{{ Math.floor(players.length/2) + 1 }} or more players voted yes.</p>
+						<h1>TEAM APPROVED</h1>
+					</div>
+					<div class="vote-btn" id="vote-fail" :class="{selected: voteBtnSelected && !passSelected}" @click="failBtnSelected">
+						<p>Less than {{ Math.floor(players.length/2) + 1 }} players voted yes.</p>
+						<h1>TEAM REJECTED</h1>
+					</div>
+				</div>
+			</div>
+			<div class="bottom-bar">
+				{{ activeName }}
+			</div>
+			<div class="expanding-btn" id="vote-select-done-btn" @click="voteSelectDone">Go</div>
+		</div>
+		<div class="screen" id="action-select" v-show="screenActive === 'action-select' && !passActive">
+			<div class="screen-container">
+				<h1>MISSION MEMBERS</h1>
+				<div class="player-list">
+					<div class="player-div" v-for="player in selectedPlayers"> {{ player.name }} </div>
+				</div>
+				<div id="action-btns">
+					<div class="action-btn" id="action-success" :class="{selected: actionSelected && successSelected}" @click="successActionSelected">
+						<h1>SUCCESS</h1>
+						<h2>If you are a member of the resistance, you should always vote for success.</h2>
+					</div>
+					<div class="action-btn" id="action-fail" :class="{selected: actionSelected && !successSelected}" @click="failActionSelected">
+						<h1>FAIL</h1>
+						<h2>If you are a spy, you may choose to sabotage the mission.</h2>
+					</div>
+				</div>
+			</div>
+			<div class="bottom-bar">
+				{{ activeName }}
+			</div>
+			<div class="expanding-btn" id="action-select-done-btn" @click="actionSelectDone">Go</div>
+		</div>
+		<div class="screen" id="mission-reveal" v-show="screenActive === 'mission-reveal' && !passActive">
+			<div class="screen-container">
+				<div class="mission-info">
+					<div class="mission-list">
+						<div class="mission-div" v-for="mission in missions">
+							<div class="mission-circle" :class="{spies: mission.completed && mission.sabotaged, resistance: mission.completed && !mission.sabotaged}"> {{ mission.size }} </div>
+						</div>
+					</div>
+				</div>
+				<div class="votes-list-div">
+					<div class="votes-list">
+						<div class="vote" v-for="vote in playerVotes" :class="{'success-vote': vote, 'fail-vote': !vote}">
+							{{ vote ? "SUCCESS" : "FAIL" }}
+						</div>
+					</div>
+				</div>
+				<div id="vote-result-title" :class="{success: !missions[missionId].sabotaged, fail: missions[missionId].sabotaged}">
+					{{ missions[missionId].sabotaged ? "MISSION SABOTAGED" : "MISSION SUCCESS" }}
+				</div>
+			</div>
+			<div class="bottom-bar">
+				{{ activeName }}
+			</div>
+			<div class="expanding-btn" id="mission-reveal-done-btn" @click="missionRevealDone">Go</div>
+		</div>
+		<div class="screen win" id="resistance-win" v-show="screenActive === 'resistance-win' && !passActive">
+			<div class="screen-container">
+				<div class="mission-info">
+					<div class="mission-list">
+						<div class="mission-div" v-for="mission in missions">
+							<div class="mission-circle" :class="{spies: mission.completed && mission.sabotaged, resistance: mission.completed && !mission.sabotaged}"> {{ mission.size }} </div>
+						</div>
+					</div>
+				</div>
+				<h1>RESISTANCE WINS</h1>
+				<div class="player-list">
+					<div class="player-div" v-for="player in players" :class="{spy: player.role === 'spy', resistance: player.role === 'resistance'}">{{ player.name }}</div>
+				</div>
+			</div>
+		</div>
+		<div class="screen win" id="spy-win" v-show="screenActive === 'spy-win' && !passActive">
+			<div class="screen-container">
+				<div class="mission-info">
+					<div class="mission-list">
+						<div class="mission-div" v-for="mission in missions">
+							<div class="mission-circle" :class="{spies: mission.completed && mission.sabotaged, resistance: mission.completed && !mission.sabotaged}"> {{ mission.size }} </div>
+						</div>
+					</div>
+				</div>
+				<h1>SPIES WIN</h1>
+				<div class="player-list">
+					<div class="player-div" v-for="player in players" :class="{spy: player.role === 'spy', resistance: player.role === 'resistance'}">{{ player.name }}</div>
+				</div>
+			</div>
+		</div>
+		<div class="screen" id="pass" v-show="passActive">
+			<div class="screen-container">
+				<div id="pass-main">
+					<h2>PASS DEVICE TO</h2>
+					<h1>{{ passName }}</h1>
+				</div>
+				<div id="pass-done" @click="passDone">
+					That's Me
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="app.js"></script>
+	<script>
+		function toggleFullScreen() {
+			var doc = window.document;
+			var docEl = doc.documentElement;
+
+			var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+			var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+			if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+			requestFullScreen.call(docEl);
+			}
+			else {
+			cancelFullScreen.call(doc);
+			}
+		}
+		toggleFullScreen();
+	</script>
+</body>
+</html>
